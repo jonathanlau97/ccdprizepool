@@ -15,9 +15,8 @@ st.markdown("""
     .stApp {
         background-color: #1a1a1a;
     }
-    /* ## CHANGED: Reduced the gap for a more compact look */
     div[data-testid="stVerticalBlock"] {
-        gap: 0.25rem;
+        gap: 0.75rem;
     }
     .stApp > header {
         display: none;
@@ -30,6 +29,13 @@ st.markdown("""
     .scorecard-label{font-size:0.9rem;color:#aaa;}
     .prize-share-value{font-size:1.5rem;font-weight:bold;color:#f0ad4e;line-height:1;}
     .prize-share-label{font-size:0.8rem;color:#aaa;text-transform:uppercase;}
+
+    /* ## NEW: Media query for mobile optimization */
+    @media (max-width: 768px) {
+      .scorecard {
+        margin-bottom: 1rem; /* Add space between scorecards when stacked on mobile */
+      }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -96,7 +102,7 @@ def PrizePoolComponent(amount):
         .prize-pool-container{{
             background-color:#000;
             border: 2px solid #333;
-            border-radius: 0;
+            border-radius: 20px;
             padding:2rem;
             text-align:center;
             animation: pulse-glow 2.5s infinite ease-in-out;
@@ -124,17 +130,12 @@ def PrizePoolComponent(amount):
 # --- Streamlit App Layout ---
 st_autorefresh(interval=30 * 1000, key="data_refresher")
 
-# No title is displayed for a cleaner look
-
 df = load_data(CSV_URL)
 
 if df is not None and not df.empty:
     prize_pool, top_crew = calculate_flight_metrics(df)
     
     PrizePoolComponent(prize_pool)
-
-    # ## CHANGED: Added margin controls to the inline style for a tighter fit
-    st.markdown("<h2 style='text-align: center; color: white; margin-top: 0.75rem; margin-bottom: 0.5rem;'>🏆 Top Performing Crew</h2>", unsafe_allow_html=True)
     
     cols = st.columns(3)
     ranks = ["🥇", "🥈", "🥉"]
