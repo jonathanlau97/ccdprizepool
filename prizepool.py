@@ -6,9 +6,8 @@ from streamlit_autorefresh import st_autorefresh
 # --- Page Configuration ---
 st.set_page_config(page_title="Flight Crew Prize Pool", layout="centered")
 
-## CHANGED: Define the URL to your CSV file on GitHub
+## Define the URL to your CSV file on GitHub
 CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flights_sales.csv'
-
 
 # --- Main CSS (with Bento Layout adjustments) ---
 st.markdown("""
@@ -22,14 +21,22 @@ st.markdown("""
     .stApp > header {
         display: none;
     }
-    .scorecard{background-color:#222;border:2px solid #444;border-radius:15px;padding:1.5rem;text-align:center;height:100%;display:flex;flex-direction:column;justify-content:center}.scorecard-rank{font-size:2.5rem;font-weight:bold;margin-bottom:.5rem}.scorecard-name{font-size:1.4rem;font-weight:bold;color:#fff;word-wrap:break-word}.scorecard-id{font-size:1rem;color:#aaa;margin-bottom:1rem}.scorecard-sales{font-size:2rem;font-weight:bold;color:#00ff41}.scorecard-label{font-size:.9rem;color:#aaa}
+    .scorecard{background-color:#222;border:2px solid #444;border-radius:15px;padding:1.5rem;text-align:center;height:100%;display:flex;flex-direction:column;justify-content:center;gap:0.5rem;}
+    .scorecard-rank{font-size:2.5rem;font-weight:bold;margin-bottom:0.25rem}
+    .scorecard-name{font-size:1.4rem;font-weight:bold;color:#fff;word-wrap:break-word}
+    .scorecard-id{font-size:1rem;color:#aaa;}
+    .scorecard-sales{font-size:2rem;font-weight:bold;color:#00ff41;line-height:1;}
+    .scorecard-label{font-size:0.9rem;color:#aaa;}
+    
+    /* ## NEW: Styles for the individual prize share display */
+    .prize-share-value{font-size:1.5rem;font-weight:bold;color:#f0ad4e;line-height:1;}
+    .prize-share-label{font-size:0.8rem;color:#aaa;text-transform:uppercase;}
+
 </style>
 """, unsafe_allow_html=True)
 
 
 # --- Cached Data Functions for Performance ---
-
-## CHANGED: The function now takes a URL instead of an uploaded file object
 @st.cache_data
 def load_data(url):
     """Reads, cleans, and caches the CSV data from a URL."""
@@ -52,14 +59,25 @@ def calculate_flight_metrics(_df):
     """Calculates prize pool and top crew from a dataframe."""
     if _df.empty:
         return 0.00, pd.DataFrame()
+        
     unique_flights_df = _df.drop_duplicates(subset=['Flight_ID'])
     total_bottles = unique_flights_df['Bottles_Sold_on_Flight'].sum()
     prize_pool = total_bottles * 5.00
+    
     top_crew = _df.groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
                  .sum() \
                  .reset_index(name='Total Bottles Credited') \
                  .sort_values(by='Total Bottles Credited', ascending=False) \
                  .head(3)
+
+    # ## NEW: Calculate individual prize share for the top 3
+    if not top_crew.empty:
+        total_top_crew_bottles = top_crew['Total Bottles Credited'].sum()
+        if total_top_crew_bottles > 0:
+            top_crew['Prize Share'] = (top_crew['Total Bottles Credited'] / total_top_crew_bottles) * prize_pool
+        else:
+            top_crew['Prize Share'] = 0.0
+            
     return prize_pool, top_crew
 
 
@@ -72,9 +90,16 @@ def PrizePoolComponent(amount):
     <head>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
-        @keyframes pulse-glow {{0%{{box-shadow:0 0 30px rgba(0,255,65,.4)}}50%{{box-shadow:0 0 55px rgba(0,255,65,.9)}}100%{{box-shadow:0 0 30px rgba(0,255,65,.4)}}}}
         body{{margin:0;padding:0;}}
-        .prize-pool-container{{background-color:#000;border:5px solid #444;border-radius:20px;padding:2rem;text-align:center;animation:pulse-glow 3s infinite ease-in-out;}}
+        .prize-pool-container{{
+            background-color:#000;
+            border: 4px solid #222;
+            border-radius:20px;
+            padding:2rem;
+            text-align:center;
+            /* ## CHANGED: Refined static glow effect for cleaner edges */
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.5), inset 0 0 8px rgba(0, 255, 65, 0.4);
+        }}
         .prize-pool-label{{color:#ccc;font-size:1.5rem;text-transform:uppercase;letter-spacing:2px;}}
         .prize-pool-value{{font-family:'Orbitron',sans-serif;color:#00ff41;font-size:clamp(3rem,10vw,5rem);font-weight:700;text-shadow:0 0 20px #00ff41;line-height:1.1;}}
     </style>
@@ -95,24 +120,21 @@ def PrizePoolComponent(amount):
     """
     components.html(html_string, height=230)
 
-
 # --- Streamlit App Layout ---
 st_autorefresh(interval=30 * 1000, key="data_refresher")
 
 st.title("✈️ Flight Crew Prize Pool")
 
-# --- CHANGED: Load data directly from the URL ---
 df = load_data(CSV_URL)
 
 if df is not None and not df.empty:
-    # Calculate metrics on the entire dataframe
     prize_pool, top_crew = calculate_flight_metrics(df)
     
     PrizePoolComponent(prize_pool)
 
     st.header("🏆 Top Performing Crew")
     
-    st.markdown(f"<p style='text-align: center; color: #cccccc;'>The Top 3 crews will split a total prize pool of <b>RM {prize_pool:,.2f}</b>.</p>", unsafe_allow_html=True)
+    # ## REMOVED: The old prize split statement is gone.
     
     cols = st.columns(3)
     ranks = ["🥇", "🥈", "🥉"]
@@ -120,14 +142,21 @@ if df is not None and not df.empty:
     if not top_crew.empty:
         for i, (index, row) in enumerate(top_crew.iterrows()):
             with cols[i]:
+                # ## NEW: The scorecard now includes the individual prize share
                 st.markdown(
                     f"""
                     <div class="scorecard">
                         <div class="scorecard-rank">{ranks[i]}</div>
                         <div class="scorecard-name">{row['Crew_Name']}</div>
                         <div class="scorecard-id">ID: {row['Crew_ID']}</div>
-                        <div class="scorecard-sales">{row['Total Bottles Credited']}</div>
-                        <div class="scorecard-label">Total Bottles Credited</div>
+                        <div>
+                            <div class="scorecard-sales">{row['Total Bottles Credited']}</div>
+                            <div class="scorecard-label">Bottles Credited</div>
+                        </div>
+                        <div>
+                            <div class="prize-share-value">RM {row.get('Prize Share', 0):,.2f}</div>
+                            <div class="prize-share-label">Prize Share</div>
+                        </div>
                     </div>
                     """,
                     unsafe_allow_html=True
