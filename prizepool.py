@@ -9,11 +9,15 @@ st.set_page_config(page_title="Flight Crew Prize Pool", layout="centered")
 ## Define the URL to your CSV file on GitHub
 CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flights_sales.csv'
 
-# --- Main CSS (with Bento Layout adjustments) ---
+# --- Main CSS (with New White Theme) ---
 st.markdown("""
 <style>
+    /* ## CHANGED: White Theme */
+    body {
+        color: #333; /* Default text color for the app */
+    }
     .stApp {
-        background-color: #1a1a1a;
+        background-color: #FFFFFF;
     }
     div[data-testid="stVerticalBlock"] {
         gap: 0.75rem;
@@ -21,21 +25,25 @@ st.markdown("""
     .stApp > header {
         display: none;
     }
-    .scorecard{background-color:#222;border:2px solid #444;border-radius:15px;padding:1.5rem;text-align:center;height:100%;display:flex;flex-direction:column;justify-content:center;gap:0.5rem;}
-    .scorecard-rank{font-size:2.5rem;font-weight:bold;margin-bottom:0.25rem}
-    .scorecard-name{font-size:1.4rem;font-weight:bold;color:#fff;word-wrap:break-word}
-    .scorecard-id{font-size:1rem;color:#aaa;}
-    .scorecard-sales{font-size:2rem;font-weight:bold;color:#00ff41;line-height:1;}
-    .scorecard-label{font-size:0.9rem;color:#aaa;}
-    .prize-share-value{font-size:1.5rem;font-weight:bold;color:#f0ad4e;line-height:1;}
-    .prize-share-label{font-size:0.8rem;color:#aaa;text-transform:uppercase;}
-
-    /* ## NEW: Media query for mobile optimization */
-    @media (max-width: 768px) {
-      .scorecard {
-        margin-bottom: 1rem; /* Add space between scorecards when stacked on mobile */
-      }
+    .scorecard {
+        background-color: #FFFFFF;
+        border: 2px solid #00ff41; /* Bright green outline */
+        border-radius:15px;
+        padding:1.5rem;
+        text-align:center;
+        height:100%;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        gap:0.5rem;
     }
+    .scorecard-rank{font-size:2.5rem;font-weight:bold;margin-bottom:0.25rem}
+    .scorecard-name{color:#333;font-size:1.4rem;font-weight:bold;word-wrap:break-word}
+    .scorecard-id{color:#555;font-size:1rem;}
+    .scorecard-sales{color:#00c851;font-size:2rem;font-weight:bold;line-height:1;}
+    .scorecard-label{color:#555;font-size:0.9rem;}
+    .prize-share-value{color:#ff8800;font-size:1.5rem;font-weight:bold;line-height:1;}
+    .prize-share-label{color:#555;font-size:0.8rem;text-transform:uppercase;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -92,23 +100,25 @@ def PrizePoolComponent(amount):
     <html>
     <head>
     <style>
+        /* ## CHANGED: White Theme for Prize Pool Component */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
-        @keyframes pulse-glow {{
-          0% {{ box-shadow: 0 0 15px rgba(0, 255, 65, 0.5); }}
-          50% {{ box-shadow: 0 0 30px rgba(0, 255, 65, 0.8); }}
-          100% {{ box-shadow: 0 0 15px rgba(0, 255, 65, 0.5); }}
-        }}
         body{{margin:0;padding:0;}}
         .prize-pool-container{{
-            background-color:#000;
-            border: 2px solid #333;
+            background-color: #FFFFFF;
+            border: 3px solid #00ff41; /* Bright green outline */
             border-radius: 20px;
-            padding:2rem;
-            text-align:center;
-            animation: pulse-glow 2.5s infinite ease-in-out;
+            padding: 2rem;
+            text-align: center;
         }}
-        .prize-pool-label{{color:#ccc;font-size:1.5rem;text-transform:uppercase;letter-spacing:2px;}}
-        .prize-pool-value{{font-family:'Orbitron',sans-serif;color:#00ff41;font-size:clamp(3rem,10vw,5rem);font-weight:700;text-shadow:0 0 20px #00ff41;line-height:1.1;}}
+        .prize-pool-label{{color:#555;font-size:1.5rem;text-transform:uppercase;letter-spacing:2px;}}
+        .prize-pool-value{{
+            font-family:'Orbitron',sans-serif;
+            color: #00c851; /* Darker green for better contrast on white */
+            font-size:clamp(3rem,10vw,5rem);
+            font-weight:700;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5); /* Softer text glow */
+            line-height:1.1;
+        }}
     </style>
     </head>
     <body>
