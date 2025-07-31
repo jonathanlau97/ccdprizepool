@@ -150,7 +150,7 @@ if df is not None and not df.empty:
     if len(selected_date_range) == 2:
         start_date, end_date = selected_date_range
         mask = (df['Flight_Date'].dt.date >= start_date) & (df['Flight_Date'].dt.date <= end_date)
-        filtered__df = df.loc[mask]
+        filtered_df = df.loc[mask]
 
         prize_pool, top_crew = calculate_flight_metrics(filtered_df)
         
