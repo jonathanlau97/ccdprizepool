@@ -5,16 +5,11 @@ import streamlit.components.v1 as components
 # --- Page Configuration ---
 st.set_page_config(page_title="Flight Crew Prize Pool", layout="centered")
 
-# --- Custom CSS with Pulse Animation ---
+# --- Main CSS (Styling for Scorecards ONLY) ---
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
-@keyframes pulse-glow {
-  0% { box-shadow: 0 0 30px rgba(0, 255, 65, 0.4); }
-  50% { box-shadow: 0 0 55px rgba(0, 255, 65, 0.9); }
-  100% { box-shadow: 0 0 30px rgba(0, 255, 65, 0.4); }
-}
-.prize-pool-container{background-color:#000;border:5px solid #444;border-radius:20px;padding:2rem;text-align:center;margin-bottom:2rem;animation:pulse-glow 3s infinite ease-in-out}.prize-pool-label{color:#ccc;font-size:1.5rem;text-transform:uppercase;letter-spacing:2px}.prize-pool-value{font-family:'Orbitron',sans-serif;color:#00ff41;font-size:clamp(3rem,10vw,6rem);font-weight:700;text-shadow:0 0 20px #00ff41;line-height:1.1}.scorecard{background-color:#1a1a1a;border:2px solid #555;border-radius:15px;padding:1.5rem;text-align:center;height:100%;display:flex;flex-direction:column;justify-content:center}.scorecard-rank{font-size:2.5rem;font-weight:bold;margin-bottom:.5rem}.scorecard-name{font-size:1.4rem;font-weight:bold;color:#fff;word-wrap:break-word}.scorecard-id{font-size:1rem;color:#aaa;margin-bottom:1rem}.scorecard-sales{font-size:2rem;font-weight:bold;color:#00ff41}.scorecard-label{font-size:.9rem;color:#aaa}
+/* Scorecard styles are kept here as they are part of the main page */
+.scorecard{background-color:#1a1a1a;border:2px solid #555;border-radius:15px;padding:1.5rem;text-align:center;height:100%;display:flex;flex-direction:column;justify-content:center}.scorecard-rank{font-size:2.5rem;font-weight:bold;margin-bottom:.5rem}.scorecard-name{font-size:1.4rem;font-weight:bold;color:#fff;word-wrap:break-word}.scorecard-id{font-size:1rem;color:#aaa;margin-bottom:1rem}.scorecard-sales{font-size:2rem;font-weight:bold;color:#00ff41}.scorecard-label{font-size:.9rem;color:#aaa}
 </style>
 """, unsafe_allow_html=True)
 
@@ -54,37 +49,79 @@ def calculate_flight_metrics(df):
     return prize_pool, top_crew
 
 
-# --- Main Component with CORRECTED JavaScript ---
+# --- Self-Contained Prize Pool Component with Embedded Styles ---
 
 def PrizePoolComponent(amount):
-    """Renders the animated prize pool component."""
+    """Renders the animated prize pool component with all its styles included."""
     html_string = f"""
-    <div class="prize-pool-container">
-        <div class="prize-pool-label">Prize Pool for Selected Period</div>
-        <div id="prize-pool-counter" class="prize-pool-value"></div>
-    </div>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <style>
+        /* All styles for the prize pool component are now INSIDE the component */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+        
+        @keyframes pulse-glow {{
+          0% {{ box-shadow: 0 0 30px rgba(0, 255, 65, 0.4); }}
+          50% {{ box-shadow: 0 0 55px rgba(0, 255, 65, 0.9); }}
+          100% {{ box-shadow: 0 0 30px rgba(0, 255, 65, 0.4); }}
+        }}
 
-    <script type="module">
-      // Import the CountUp class directly from the CDN URL
-      import {{ CountUp }} from 'https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js';
+        body {{
+            margin: 0;
+            padding: 0;
+        }}
 
-      const options = {{
-        prefix: 'RM ',
-        decimalPlaces: 2,
-        duration: 2.5,
-        separator: ',',
-        useEasing: true,
-      }};
-      
-      const countUp = new CountUp('prize-pool-counter', {amount}, options);
-      if (!countUp.error) {{
-        countUp.start();
-      }} else {{
-        console.error(countUp.error);
-      }}
-    </script>
+        .prize-pool-container {{
+            background-color: #000;
+            border: 5px solid #444;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            animation: pulse-glow 3s infinite ease-in-out;
+        }}
+        .prize-pool-label {{
+            color: #ccc;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }}
+        .prize-pool-value {{
+            font-family: 'Orbitron', sans-serif;
+            color: #00ff41;
+            font-size: clamp(3rem, 10vw, 5rem); /* Adjusted size slightly for better fit */
+            font-weight: 700;
+            text-shadow: 0 0 20px #00ff41;
+            line-height: 1.1;
+        }}
+    </style>
+    </head>
+    <body>
+        <div class="prize-pool-container">
+            <div class="prize-pool-label">Prize Pool for Selected Period</div>
+            <div id="prize-pool-counter" class="prize-pool-value"></div>
+        </div>
+
+        <script type="module">
+          import {{ CountUp }} from 'https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js';
+          const options = {{
+            prefix: 'RM ',
+            decimalPlaces: 2,
+            duration: 2.5,
+            separator: ',',
+            useEasing: true,
+          }};
+          const countUp = new CountUp('prize-pool-counter', {amount}, options);
+          if (!countUp.error) {{
+            countUp.start();
+          }} else {{
+            console.error(countUp.error);
+          }}
+        </script>
+    </body>
+    </html>
     """
-    components.html(html_string, height=220)
+    components.html(html_string, height=230) # Adjusted height slightly
 
 
 # --- Streamlit App Layout ---
@@ -113,10 +150,11 @@ if df is not None and not df.empty:
     if len(selected_date_range) == 2:
         start_date, end_date = selected_date_range
         mask = (df['Flight_Date'].dt.date >= start_date) & (df['Flight_Date'].dt.date <= end_date)
-        filtered_df = df.loc[mask]
+        filtered__df = df.loc[mask]
 
         prize_pool, top_crew = calculate_flight_metrics(filtered_df)
         
+        # This will now render correctly with all styles
         PrizePoolComponent(prize_pool)
 
         st.header("🏆 Top Performing Crew")
