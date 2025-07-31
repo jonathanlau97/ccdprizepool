@@ -1,12 +1,11 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
 import streamlit.components.v1 as components
 
 # --- Page Configuration ---
 st.set_page_config(page_title="Flight Crew Prize Pool", layout="centered")
 
-# --- Custom CSS (unchanged) ---
+# --- Custom CSS with Pulse Animation ---
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
@@ -20,7 +19,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# OPTIMIZATION 1: Cache the data loading and cleaning process.
+# --- Cached Data Functions for Performance ---
+
 @st.cache_data
 def load_data(uploaded_file):
     """Reads, cleans, and caches the uploaded CSV data."""
@@ -38,8 +38,6 @@ def load_data(uploaded_file):
         st.error(f"Error processing file: {e}")
         return None
 
-
-# OPTIMIZATION 2: Cache the metric calculations.
 @st.cache_data
 def calculate_flight_metrics(df):
     """Calculates prize pool and top crew from a dataframe."""
@@ -56,26 +54,41 @@ def calculate_flight_metrics(df):
     return prize_pool, top_crew
 
 
-# --- Prize Pool HTML Component (unchanged) ---
+# --- Main Component with CORRECTED JavaScript ---
+
 def PrizePoolComponent(amount):
+    """Renders the animated prize pool component."""
     html_string = f"""
     <div class="prize-pool-container">
         <div class="prize-pool-label">Prize Pool for Selected Period</div>
         <div id="prize-pool-counter" class="prize-pool-value"></div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {{
-        const options = {{ prefix: 'RM ', decimalPlaces: 2, duration: 2.5, separator: ',', useEasing: true }};
-        let countUp = new CountUp('prize-pool-counter', {amount}, options);
-        if (!countUp.error) {{ countUp.start(); }} else {{ console.error(countUp.error); }}
-      }});
+
+    <script type="module">
+      // Import the CountUp class directly from the CDN URL
+      import {{ CountUp }} from 'https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js';
+
+      const options = {{
+        prefix: 'RM ',
+        decimalPlaces: 2,
+        duration: 2.5,
+        separator: ',',
+        useEasing: true,
+      }};
+      
+      const countUp = new CountUp('prize-pool-counter', {amount}, options);
+      if (!countUp.error) {{
+        countUp.start();
+      }} else {{
+        console.error(countUp.error);
+      }}
     </script>
     """
     components.html(html_string, height=220)
 
 
 # --- Streamlit App Layout ---
+
 st.title("✈️ Flight Crew Prize Pool")
 
 with st.expander("⚙️ Upload Flight Roster CSV"):
@@ -83,12 +96,12 @@ with st.expander("⚙️ Upload Flight Roster CSV"):
 
 df = None
 if uploaded_file:
-    # Call the cached function to load data
     df = load_data(uploaded_file)
 
 if df is not None and not df.empty:
     min_date = df['Flight_Date'].min().date()
     max_date = df['Flight_Date'].max().date()
+    
     selected_date_range = st.date_input(
         "Select a date range for flights",
         value=(min_date, max_date),
@@ -102,7 +115,6 @@ if df is not None and not df.empty:
         mask = (df['Flight_Date'].dt.date >= start_date) & (df['Flight_Date'].dt.date <= end_date)
         filtered_df = df.loc[mask]
 
-        # Call the cached function to calculate metrics
         prize_pool, top_crew = calculate_flight_metrics(filtered_df)
         
         PrizePoolComponent(prize_pool)
