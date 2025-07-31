@@ -15,8 +15,9 @@ st.markdown("""
     .stApp {
         background-color: #1a1a1a;
     }
+    /* ## CHANGED: Reduced the gap for a more compact look */
     div[data-testid="stVerticalBlock"] {
-        gap: 0.75rem;
+        gap: 0.25rem;
     }
     .stApp > header {
         display: none;
@@ -123,7 +124,7 @@ def PrizePoolComponent(amount):
 # --- Streamlit App Layout ---
 st_autorefresh(interval=30 * 1000, key="data_refresher")
 
-# The st.title has been removed
+# No title is displayed for a cleaner look
 
 df = load_data(CSV_URL)
 
@@ -132,8 +133,8 @@ if df is not None and not df.empty:
     
     PrizePoolComponent(prize_pool)
 
-    # Use markdown for a white header
-    st.markdown("<h2 style='text-align: center; color: white;'>🏆 Top Performing Crew</h2>", unsafe_allow_html=True)
+    # ## CHANGED: Added margin controls to the inline style for a tighter fit
+    st.markdown("<h2 style='text-align: center; color: white; margin-top: 0.75rem; margin-bottom: 0.5rem;'>🏆 Top Performing Crew</h2>", unsafe_allow_html=True)
     
     cols = st.columns(3)
     ranks = ["🥇", "🥈", "🥉"]
