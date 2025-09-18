@@ -88,8 +88,8 @@ def add_responsive_images(desktop_image_url, mobile_image_url):
     """Add responsive images that change based on screen size"""
     st.markdown(f"""
     <div class="responsive-image-container">
-        <img src="https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/SUNTORY DESKTOP.jpg" class="responsive-image desktop-image" alt="AirAsia Move Desktop Banner">
-        <img src="https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/SUNTORY MOBILE.jpg" class="responsive-image mobile-image" alt="AirAsia Move Mobile Banner">
+        <img src="{desktop_image_url}" class="responsive-image desktop-image" alt="AirAsia Move Desktop Banner">
+        <img src="{mobile_image_url}" class="responsive-image mobile-image" alt="AirAsia Move Mobile Banner">
     </div>
     """, unsafe_allow_html=True)
 
@@ -173,10 +173,10 @@ def PrizePoolComponent(amount):
             <div id="prize-pool-counter" class="prize-pool-value"></div>
         </div>
         <script type="module">
-          import { CountUp } from 'https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js';
-          const options = {prefix:'RM ',decimalPlaces:2,duration:1.5,separator:',',useEasing:true,};
+          import {{ CountUp }} from 'https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js';
+          const options = {{prefix:'RM ',decimalPlaces:2,duration:1.5,separator:',',useEasing:true,}};
           const countUp = new CountUp('prize-pool-counter',{amount},options);
-          if(!countUp.error){countUp.start();}else{console.error(countUp.error);}
+          if(!countUp.error){{countUp.start();}}else{{console.error(countUp.error);}}
         </script>
     </body>
     </html>
@@ -227,4 +227,3 @@ if df is not None and not df.empty:
         st.info("No flight data available to display.")
 else:
     st.warning("Could not load data from the specified GitHub URL. Please check the URL and ensure the repository is public.")
-
