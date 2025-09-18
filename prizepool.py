@@ -88,8 +88,8 @@ def add_responsive_images(desktop_image_url, mobile_image_url):
     """Add responsive images that change based on screen size"""
     st.markdown(f"""
     <div class="responsive-image-container">
-        <img src="{desktop_image_url}" class="responsive-image desktop-image" alt="AirAsia Move Desktop Banner">
-        <img src="{mobile_image_url}" class="responsive-image mobile-image" alt="AirAsia Move Mobile Banner">
+        <img src="https://github.com/jonathanlau97/ccdprizepool/blob/main/suntory-desktop.jpg" class="responsive-image desktop-image" alt="AirAsia Move Desktop Banner">
+        <img src="https://github.com/jonathanlau97/ccdprizepool/blob/main/suntory-mobile.jpg" alt="AirAsia Move Mobile Banner">
     </div>
     """, unsafe_allow_html=True)
 
@@ -227,3 +227,4 @@ if df is not None and not df.empty:
         st.info("No flight data available to display.")
 else:
     st.warning("Could not load data from the specified GitHub URL. Please check the URL and ensure the repository is public.")
+
