@@ -9,7 +9,7 @@ st.set_page_config(page_title="Flight Crew Prize Pool", layout="centered")
 ## Define the URL to your CSV file on GitHub
 CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flights_sales.csv'
 
-# --- Main CSS (with New White Theme) ---
+# --- Main CSS (with New White Theme and Responsive Images) ---
 st.markdown("""
 <style>
     /* ## CHANGED: White Theme */
@@ -25,6 +25,41 @@ st.markdown("""
     .stApp > header {
         display: none;
     }
+    
+    /* Responsive Image Container */
+    .responsive-image-container {
+        width: 100%;
+        text-align: center;
+        margin: 1rem 0;
+    }
+    
+    .responsive-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Desktop Image (default) */
+    .desktop-image {
+        display: block;
+    }
+    
+    /* Mobile Image (hidden by default) */
+    .mobile-image {
+        display: none;
+    }
+    
+    /* Media Query for Mobile Devices */
+    @media (max-width: 768px) {
+        .desktop-image {
+            display: none;
+        }
+        .mobile-image {
+            display: block;
+        }
+    }
+    
     .scorecard {
         background-color: #FFFFFF;
         border: 2px solid #00ff41; /* Bright green outline */
@@ -46,6 +81,17 @@ st.markdown("""
     .prize-share-label{color:#555;font-size:0.8rem;text-transform:uppercase;}
 </style>
 """, unsafe_allow_html=True)
+
+
+# --- Function to add responsive images ---
+def add_responsive_images(desktop_image_url, mobile_image_url):
+    """Add responsive images that change based on screen size"""
+    st.markdown(f"""
+    <div class="responsive-image-container">
+        <img src="https://github.com/jonathanlau97/ccdprizepool/blob/main/SUNTORY%20DESKTOP.jpg" class="responsive-image desktop-image" alt="AirAsia Move Desktop Banner">
+        <img src="https://github.com/jonathanlau97/ccdprizepool/blob/main/SUNTORY%20MOBILE.jpg" class="responsive-image mobile-image" alt="AirAsia Move Mobile Banner">
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # --- Cached Data Functions for Performance ---
@@ -127,10 +173,10 @@ def PrizePoolComponent(amount):
             <div id="prize-pool-counter" class="prize-pool-value"></div>
         </div>
         <script type="module">
-          import {{ CountUp }} from 'https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js';
-          const options = {{prefix:'RM ',decimalPlaces:2,duration:1.5,separator:',',useEasing:true,}};
+          import { CountUp } from 'https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js';
+          const options = {prefix:'RM ',decimalPlaces:2,duration:1.5,separator:',',useEasing:true,};
           const countUp = new CountUp('prize-pool-counter',{amount},options);
-          if(!countUp.error){{countUp.start();}}else{{console.error(countUp.error);}}
+          if(!countUp.error){countUp.start();}else{console.error(countUp.error);}
         </script>
     </body>
     </html>
@@ -139,6 +185,12 @@ def PrizePoolComponent(amount):
 
 # --- Streamlit App Layout ---
 st_autorefresh(interval=30 * 1000, key="data_refresher")
+
+# Add responsive promotional images at the top
+# Replace these URLs with your actual image URLs
+desktop_image_url = "https://your-domain.com/path-to-desktop-image.jpg"
+mobile_image_url = "https://your-domain.com/path-to-mobile-image.jpg"
+add_responsive_images(desktop_image_url, mobile_image_url)
 
 df = load_data(CSV_URL)
 
