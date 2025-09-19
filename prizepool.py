@@ -295,25 +295,25 @@ def create_leaderboard_section(crew_data, title):
     
     # Remaining positions (4-10) in a styled list
     if len(crew_data) > 3:
-        with st.container():
-            st.markdown('<div class="top-10-list">', unsafe_allow_html=True)
+        remaining_crew = crew_data.iloc[3:10]
+        
+        # Build the complete HTML string properly
+        rows_html = ""
+        for idx, (_, row) in enumerate(remaining_crew.iterrows()):
+            position = idx + 4
+            crew_name = str(row['Crew_Name']).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            bottles = int(row['Total Bottles Credited'])
             
-            remaining_crew = crew_data.iloc[3:10]
-            for idx, (_, row) in enumerate(remaining_crew.iterrows()):
-                position = idx + 4
-                crew_name = row['Crew_Name']
-                bottles = row['Total Bottles Credited']
-                
-                # Create each row as a separate component
-                col1, col2, col3 = st.columns([1, 4, 2])
-                with col1:
-                    st.markdown(f'<div style="color: #00ff41; font-weight: bold; font-size: 1.2rem;">#{position}</div>', unsafe_allow_html=True)
-                with col2:
-                    st.markdown(f'<div style="color: #FFFFFF; font-weight: 600;">{crew_name}</div>', unsafe_allow_html=True)
-                with col3:
-                    st.markdown(f'<div style="color: #00ff41; font-weight: bold;">{bottles} bottles</div>', unsafe_allow_html=True)
-            
-            st.markdown('</div>', unsafe_allow_html=True)
+            rows_html += f"""
+            <div class="top-10-row">
+                <div class="position-number">#{position}</div>
+                <div class="crew-name">{crew_name}</div>
+                <div class="bottles-count">{bottles} bottles</div>
+            </div>"""
+        
+        # Render the complete list
+        complete_html = f'<div class="top-10-list">{rows_html}</div>'
+        st.markdown(complete_html, unsafe_allow_html=True)
 
 # --- Main App ---
 st_autorefresh(interval=30 * 1000, key="data_refresher")
