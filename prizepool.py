@@ -7,7 +7,7 @@ from streamlit_autorefresh import st_autorefresh
 st.set_page_config(page_title="Flight Crew Prize Pool", layout="centered")
 
 ## Define the URL to your CSV file on GitHub
-CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flights_sales.csv'
+CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/blob/main/flights_sales.csv'
 
 # --- Main CSS (with Background Images) ---
 def apply_background_css(desktop_bg_url, mobile_bg_url):
@@ -332,3 +332,4 @@ if df is not None and not df.empty:
     
 else:
     st.warning("Could not load data from the specified GitHub URL. Please check the URL and ensure the repository is public.")
+
