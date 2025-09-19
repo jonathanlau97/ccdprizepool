@@ -53,30 +53,33 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }}
-    
-    .scorecard {
-        background-color: rgba(255, 255, 255, 0.95);
-        border: 2px solid #00ff41;
-        border-radius:15px;
-        padding:1.5rem;
-        text-align:center;
-        height:100%;
-        display:flex;
-        flex-direction:column;
-        justify-content:center;
-        gap:0.5rem;
-        backdrop-filter: blur(5px);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    }
-    .scorecard-rank{font-size:2.5rem;font-weight:bold;margin-bottom:0.25rem}
-    .scorecard-name{color:#333;font-size:1.4rem;font-weight:bold;word-wrap:break-word}
-    .scorecard-id{color:#555;font-size:1rem;}
-    .scorecard-sales{color:#00c851;font-size:2rem;font-weight:bold;line-height:1;}
-    .scorecard-label{color:#555;font-size:0.9rem;}
-    .prize-share-value{color:#ff8800;font-size:1.5rem;font-weight:bold;line-height:1;}
-    .prize-share-label{color:#555;font-size:0.8rem;text-transform:uppercase;}
-</style>
-""", unsafe_allow_html=True)
+        
+        /* Scorecard styling */
+        
+        /* Scorecard styling */
+        .scorecard {{
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 2px solid #00ff41;
+            border-radius:15px;
+            padding:1.5rem;
+            text-align:center;
+            height:100%;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            gap:0.5rem;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }}
+        .scorecard-rank{{font-size:2.5rem;font-weight:bold;margin-bottom:0.25rem}}
+        .scorecard-name{{color:#333;font-size:1.4rem;font-weight:bold;word-wrap:break-word}}
+        .scorecard-id{{color:#555;font-size:1rem;}}
+        .scorecard-sales{{color:#00c851;font-size:2rem;font-weight:bold;line-height:1;}}
+        .scorecard-label{{color:#555;font-size:0.9rem;}}
+        .prize-share-value{{color:#ff8800;font-size:1.5rem;font-weight:bold;line-height:1;}}
+        .prize-share-label{{color:#555;font-size:0.8rem;text-transform:uppercase;}}
+    </style>
+    """, unsafe_allow_html=True)
 
 
 # --- Function to wrap content in overlay ---
