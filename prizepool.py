@@ -228,20 +228,32 @@ def load_data(url):
             
             # Check if Airline_Code exists, if not create it based on Flight_ID or Crew_ID pattern
             if 'Airline_Code' not in df.columns:
+                st.info("⚠️ No Airline_Code column found. Attempting to auto-detect...")
+                
                 # Try to extract airline code from Flight_ID (assuming format like AK123, D7456)
-                df['Airline_Code'] = df['Flight_ID'].str.extract(r'^([A-Z]{1,2})', expand=False)
+                df['Airline_Code'] = df['Flight_ID'].str.extract(r'^([A-Z0-9]{1,3})', expand=False)
                 
                 # If that doesn't work, try from Crew_ID pattern
                 if df['Airline_Code'].isna().all():
-                    df['Airline_Code'] = df['Crew_ID'].str.extract(r'^([A-Z]{1,2})', expand=False)
+                    df['Airline_Code'] = df['Crew_ID'].str.extract(r'^([A-Z0-9]{1,3})', expand=False)
                 
-                # If still no pattern found, assign based on row position (50/50 split for demo)
+                # If still no pattern found, assign based on alternating pattern
                 if df['Airline_Code'].isna().all():
                     df['Airline_Code'] = ['AK' if i % 2 == 0 else 'D7' for i in range(len(df))]
-                    st.info("⚠️ Airline codes not found in data. Applied automatic assignment for demo purposes.")
+                    st.info("📝 No airline patterns detected. Using alternating AK/D7 assignment for demo.")
+                else:
+                    # Map common patterns to standard codes
+                    df['Airline_Code'] = df['Airline_Code'].str.upper()
+                    # Replace any non-standard codes with AK/D7
+                    df.loc[~df['Airline_Code'].isin(['AK', 'D7']), 'Airline_Code'] = 'AK'
+                    st.info(f"✅ Auto-detected airline codes from ID patterns")
                 
                 # Fill any remaining NaN values
                 df['Airline_Code'] = df['Airline_Code'].fillna('AK')
+            
+            # Show a sample of the data for debugging
+            st.info("🔍 Sample of processed data:")
+            st.dataframe(df[['Flight_ID', 'Crew_Name', 'Bottles_Sold_on_Flight', 'Airline_Code']].head())
             
             return df
         else:
