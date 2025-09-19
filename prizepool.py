@@ -57,13 +57,13 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
         /* Section titles */
         .section-title {{
             color: #FFFFFF;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: bold;
             text-align: center;
-            margin: 2rem 0 1rem 0;
+            margin: 1.5rem 0 1rem 0;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
             background: rgba(0, 0, 0, 0.3);
-            padding: 1rem;
+            padding: 0.8rem;
             border-radius: 15px;
             backdrop-filter: blur(10px);
         }}
@@ -73,19 +73,19 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             background-color: rgba(255, 255, 255, 0.15);
             border: 2px solid #00ff41;
             border-radius:15px;
-            padding:1.5rem;
+            padding:1rem;
             text-align:center;
             height:100%;
             display:flex;
             flex-direction:column;
             justify-content:center;
-            gap:0.5rem;
+            gap:0.3rem;
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             margin-bottom: 1rem;
         }}
         .scorecard-rank{{
-            font-size:2.5rem;
+            font-size:2rem;
             font-weight:bold;
             margin-bottom:0.25rem;
             color:#FFFFFF;
@@ -93,21 +93,23 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
         }}
         .scorecard-name{{
             color:#FFFFFF;
-            font-size:1.4rem;
+            font-size:1.1rem;
             font-weight:bold;
             word-wrap:break-word;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            overflow-wrap: break-word;
+            hyphens: auto;
         }}
         .scorecard-sales{{
             color:#00ff41;
-            font-size:2rem;
+            font-size:1.5rem;
             font-weight:bold;
             line-height:1;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         }}
         .scorecard-label{{
             color:rgba(255, 255, 255, 0.9);
-            font-size:0.9rem;
+            font-size:0.8rem;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         }}
         
@@ -125,8 +127,8 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
         .top-10-row {{
             background: rgba(255, 255, 255, 0.1);
             border-radius: 8px;
-            padding: 0.8rem;
-            margin: 0.5rem 0;
+            padding: 0.6rem;
+            margin: 0.4rem 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -137,8 +139,8 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
         .position-number {{
             color: #00ff41;
             font-weight: bold;
-            font-size: 1.2rem;
-            min-width: 40px;
+            font-size: 1rem;
+            min-width: 35px;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         }}
         
@@ -146,14 +148,18 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             color: #FFFFFF;
             font-weight: 600;
             flex: 1;
-            margin: 0 1rem;
+            margin: 0 0.5rem;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            font-size: 0.9rem;
+            overflow-wrap: break-word;
         }}
         
         .bottles-count {{
             color: #00ff41;
             font-weight: bold;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            font-size: 0.9rem;
+            white-space: nowrap;
         }}
     </style>
     """, unsafe_allow_html=True)
