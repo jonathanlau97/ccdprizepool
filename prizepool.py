@@ -88,8 +88,8 @@ def add_responsive_images(desktop_image_url, mobile_image_url):
     """Add responsive images that change based on screen size"""
     st.markdown(f"""
     <div class="responsive-image-container">
-        <img src="https://github.com/jonathanlau97/ccdprizepool/blob/main/suntory-desktop.jpg" class="responsive-image desktop-image" alt="AirAsia Move Desktop Banner">
-        <img src="https://github.com/jonathanlau97/ccdprizepool/blob/main/suntory-mobile.jpg" alt="AirAsia Move Mobile Banner">
+        <img src="{desktop_image_url}" class="responsive-image desktop-image" alt="AirAsia Move Desktop Banner">
+        <img src="{mobile_image_url}" class="responsive-image mobile-image" alt="AirAsia Move Mobile Banner">
     </div>
     """, unsafe_allow_html=True)
 
@@ -187,9 +187,9 @@ def PrizePoolComponent(amount):
 st_autorefresh(interval=30 * 1000, key="data_refresher")
 
 # Add responsive promotional images at the top
-# Replace these URLs with your actual image URLs
-desktop_image_url = "https://your-domain.com/path-to-desktop-image.jpg"
-mobile_image_url = "https://your-domain.com/path-to-mobile-image.jpg"
+# FIXED: Use proper raw GitHub URLs for images
+desktop_image_url = "https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/suntory-desktop.jpg"
+mobile_image_url = "https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/suntory-mobile.jpg"
 add_responsive_images(desktop_image_url, mobile_image_url)
 
 df = load_data(CSV_URL)
@@ -227,4 +227,3 @@ if df is not None and not df.empty:
         st.info("No flight data available to display.")
 else:
     st.warning("Could not load data from the specified GitHub URL. Please check the URL and ensure the repository is public.")
-
