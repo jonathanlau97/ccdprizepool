@@ -246,7 +246,7 @@ def PrizePoolComponent(amount):
     </head>
     <body>
         <div class="prize-pool-container">
-            <div class="prize-pool-label">Current Prize Pool</div>
+            <div class="prize-pool-label">Prize Pool</div>
             <div id="prize-pool-counter" class="prize-pool-value"></div>
         </div>
         <script type="module">
@@ -374,13 +374,14 @@ if df is not None and not df.empty:
     col1, col2 = st.columns([1, 1], gap="large")
     
     with col1:
-        create_leaderboard_section(ak_crew, "🛩️ AirAsia Top Performers")
+        create_leaderboard_section(ak_crew, "🛩️ AK Top Performers")
     
     with col2:
-        create_leaderboard_section(d7_crew, "✈️ AirAsia X Top Performers")
+        create_leaderboard_section(d7_crew, "✈️ D7 Top Performers")
     
 else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
