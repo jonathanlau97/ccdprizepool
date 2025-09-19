@@ -44,7 +44,31 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             display: none;
         }}
         
-        /* Scorecard styling - glass effect on background */
+        /* Main content wrapper */
+        .main-wrapper {{
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }}
+        
+        /* Section titles */
+        .section-title {{
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 2rem 0 1rem 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }}
+        
+        /* Scorecard styling */
         .scorecard {{
             background-color: rgba(255, 255, 255, 0.15);
             border: 2px solid #00ff41;
@@ -57,71 +81,84 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             justify-content:center;
             gap:0.5rem;
             backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
         }}
-        .scorecard-rank{{font-size:2.5rem;font-weight:bold;margin-bottom:0.25rem;color:#FFFFFF;text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);}}
-        .scorecard-name{{color:#FFFFFF;font-size:1.4rem;font-weight:bold;word-wrap:break-word;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);}}
-        .scorecard-sales{{color:#00ff41;font-size:2rem;font-weight:bold;line-height:1;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);}}
-        .scorecard-label{{color:rgba(255, 255, 255, 0.8);font-size:0.9rem;}}
+        .scorecard-rank{{
+            font-size:2.5rem;
+            font-weight:bold;
+            margin-bottom:0.25rem;
+            color:#FFFFFF;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }}
+        .scorecard-name{{
+            color:#FFFFFF;
+            font-size:1.4rem;
+            font-weight:bold;
+            word-wrap:break-word;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }}
+        .scorecard-sales{{
+            color:#00ff41;
+            font-size:2rem;
+            font-weight:bold;
+            line-height:1;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }}
+        .scorecard-label{{
+            color:rgba(255, 255, 255, 0.9);
+            font-size:0.9rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }}
         
-        /* Top 10 list styling */
-        .top-10-container {{
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        /* Top 10 list container */
+        .top-10-list {{
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 15px;
             padding: 1.5rem;
-            margin-top: 1rem;
+            margin: 1rem 0;
             backdrop-filter: blur(10px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }}
-        .top-10-title {{
-            color: #FFFFFF;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 1rem;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-        }}
-        .crew-row {{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.8rem;
-            margin-bottom: 0.5rem;
+        
+        /* Top 10 individual rows */
+        .top-10-row {{
             background: rgba(255, 255, 255, 0.1);
             border-radius: 8px;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             backdrop-filter: blur(5px);
-            opacity: 0.7;
-            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }}
-        .crew-row:hover {{
-            opacity: 1;
-            transform: translateX(5px);
-        }}
-        .crew-position {{
-            color: rgba(255, 255, 255, 0.9);
+        
+        .position-number {{
+            color: #00ff41;
             font-weight: bold;
-            font-size: 1.1rem;
-            width: 2.5rem;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-size: 1.2rem;
+            min-width: 40px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         }}
-        .crew-name-small {{
+        
+        .crew-name {{
             color: #FFFFFF;
             font-weight: 600;
             flex: 1;
-            margin-left: 1rem;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            margin: 0 1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         }}
-        .crew-bottles-small {{
+        
+        .bottles-count {{
             color: #00ff41;
             font-weight: bold;
-            font-size: 1.1rem;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- Cached Data Functions for Performance ---
+# --- Cached Data Functions ---
 @st.cache_data
 def load_data(url):
     """Reads, cleans, and caches the CSV data from a URL."""
@@ -143,10 +180,10 @@ def load_data(url):
             
             return df
         else:
-            st.error(f"CSV from URL is missing one or more required columns: {required_cols}")
+            st.error(f"CSV from URL is missing required columns: {required_cols}")
             return None
     except Exception as e:
-        st.error(f"Error reading data from the GitHub URL: {e}")
+        st.error(f"Error reading data: {e}")
         return None
 
 @st.cache_data
@@ -175,23 +212,9 @@ def calculate_flight_metrics(_df):
             
     return prize_pool, ak_crew, d7_crew
 
-# --- Function to create top 10 list ---
-def create_top_10_list(crew_data, title):
-    """Create a top 10 list showing positions 4-10 using simple text formatting"""
-    if len(crew_data) <= 3:
-        return
-    
-    remaining_crew = crew_data.iloc[3:10]  # Get positions 4-10
-    
-    # Create a simple text-based leaderboard
-    leaderboard_text = f"**{title} - Positions 4-10**\n\n"
-    
-    for i, (_, row) in enumerate(remaining_crew.iterrows(), start=4):
-        leaderboard_text += f"**#{i}** {row['Crew_Name']} - **{row['Total Bottles Credited']} bottles**\n\n"
-    
-    st.markdown(leaderboard_text)
+# --- Prize Pool Component ---
 def PrizePoolComponent(amount):
-    """Renders the animated prize pool component."""
+    """Renders the prize pool component."""
     html_string = f"""
     <!DOCTYPE html>
     <html>
@@ -206,15 +229,21 @@ def PrizePoolComponent(amount):
             padding: 2rem;
             text-align: center;
             backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }}
-        .prize-pool-label{{color:rgba(255, 255, 255, 0.9);font-size:1.5rem;text-transform:uppercase;letter-spacing:2px;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);}}
+        .prize-pool-label{{
+            color:rgba(255, 255, 255, 0.9);
+            font-size:1.5rem;
+            text-transform:uppercase;
+            letter-spacing:2px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }}
         .prize-pool-value{{
             font-family:'Orbitron',sans-serif;
             color: #00ff41;
             font-size:clamp(3rem,10vw,5rem);
             font-weight:700;
-            text-shadow: 0 0 20px rgba(0, 255, 65, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 0 20px rgba(0, 255, 65, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.8);
             line-height:1.1;
         }}
     </style>
@@ -235,74 +264,75 @@ def PrizePoolComponent(amount):
     """
     components.html(html_string, height=230)
 
-# --- Streamlit App Layout ---
+# --- Create Leaderboard Section ---
+def create_leaderboard_section(crew_data, title):
+    """Create a complete leaderboard section with top 3 cards and remaining list."""
+    if crew_data.empty:
+        st.markdown(f'<div class="section-title">{title}</div>', unsafe_allow_html=True)
+        st.info("No data available")
+        return
+    
+    # Section title
+    st.markdown(f'<div class="section-title">{title}</div>', unsafe_allow_html=True)
+    
+    # Top 3 cards
+    if len(crew_data) >= 1:
+        cols = st.columns(min(3, len(crew_data)))
+        ranks = ["🥇", "🥈", "🥉"]
+        
+        for i, (_, row) in enumerate(crew_data.head(3).iterrows()):
+            with cols[i]:
+                st.markdown(f"""
+                <div class="scorecard">
+                    <div class="scorecard-rank">{ranks[i]}</div>
+                    <div class="scorecard-name">{row['Crew_Name']}</div>
+                    <div>
+                        <div class="scorecard-sales">{row['Total Bottles Credited']}</div>
+                        <div class="scorecard-label">Bottles Credited</div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+    
+    # Remaining positions (4-10) in a styled list
+    if len(crew_data) > 3:
+        remaining_html = '<div class="top-10-list">'
+        for i, (_, row) in enumerate(crew_data.iloc[3:10].iterrows(), start=4):
+            remaining_html += f"""
+            <div class="top-10-row">
+                <div class="position-number">#{i}</div>
+                <div class="crew-name">{row['Crew_Name']}</div>
+                <div class="bottles-count">{row['Total Bottles Credited']} bottles</div>
+            </div>
+            """
+        remaining_html += '</div>'
+        st.markdown(remaining_html, unsafe_allow_html=True)
+
+# --- Main App ---
 st_autorefresh(interval=30 * 1000, key="data_refresher")
 
-# Apply background images
+# Apply background
 desktop_image_url = "https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/suntory-desktop.jpg"
 mobile_image_url = "https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/suntory-mobile.jpg"
 apply_background_css(desktop_image_url, mobile_image_url)
+
+# Wrap everything in a main container
+st.markdown('<div class="main-wrapper">', unsafe_allow_html=True)
 
 df = load_data(CSV_URL)
 
 if df is not None and not df.empty:
     prize_pool, ak_crew, d7_crew = calculate_flight_metrics(df)
     
-    # Prize Pool Component
+    # Prize Pool
     PrizePoolComponent(prize_pool)
     
     # AirAsia Leaderboard
-    st.markdown("### 🛩️ AirAsia Top Performers", unsafe_allow_html=True)
-    if not ak_crew.empty:
-        # Top 3 cards
-        cols = st.columns(min(3, len(ak_crew)))
-        ranks = ["🥇", "🥈", "🥉"]
-        
-        for i, (index, row) in enumerate(ak_crew.head(3).iterrows()):
-            with cols[i]:
-                st.markdown(
-                    f"""
-                    <div class="scorecard">
-                        <div class="scorecard-rank">{ranks[i]}</div>
-                        <div class="scorecard-name">{row['Crew_Name']}</div>
-                        <div>
-                            <div class="scorecard-sales">{row['Total Bottles Credited']}</div>
-                            <div class="scorecard-label">Bottles Credited</div>
-                        </div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-        
-        # Top 10 list (positions 4-10)
-        if len(ak_crew) > 3:
-            create_top_10_list(ak_crew, "AirAsia")
+    create_leaderboard_section(ak_crew, "🛩️ AirAsia Top Performers")
     
-    # AirAsia X Leaderboard  
-    st.markdown("### ✈️ AirAsia X Top Performers", unsafe_allow_html=True)
-    if not d7_crew.empty:
-        # Top 3 cards
-        cols = st.columns(min(3, len(d7_crew)))
-        ranks = ["🥇", "🥈", "🥉"]
-        
-        for i, (index, row) in enumerate(d7_crew.head(3).iterrows()):
-            with cols[i]:
-                st.markdown(
-                    f"""
-                    <div class="scorecard">
-                        <div class="scorecard-rank">{ranks[i]}</div>
-                        <div class="scorecard-name">{row['Crew_Name']}</div>
-                        <div>
-                            <div class="scorecard-sales">{row['Total Bottles Credited']}</div>
-                            <div class="scorecard-label">Bottles Credited</div>
-                        </div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-        
-        # Top 10 list (positions 4-10)
-        if len(d7_crew) > 3:
-            create_top_10_list(d7_crew, "AirAsia X")
+    # AirAsia X Leaderboard
+    create_leaderboard_section(d7_crew, "✈️ AirAsia X Top Performers")
+    
 else:
-    st.warning("Could not load data from the specified GitHub URL. Please check the URL and ensure the repository is public.")
+    st.warning("Could not load data from the GitHub URL.")
+
+st.markdown('</div>', unsafe_allow_html=True)
