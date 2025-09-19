@@ -273,53 +273,93 @@ def PrizePoolComponent(amount):
 # --- Create Leaderboard Section ---
 def create_leaderboard_section(crew_data, title):
     """Create a complete leaderboard section with top 3 cards and remaining list."""
-    if crew_data.empty:
+    # Create a container with fixed minimum height for alignment
+    with st.container():
+        if crew_data.empty:
+            st.markdown(f'<div class="section-title">{title}</div>', unsafe_allow_html=True)
+            st.info("No data available")
+            # Add empty space to maintain height
+            for i in range(8):
+                st.write("")
+            return
+        
+        # Section title
         st.markdown(f'<div class="section-title">{title}</div>', unsafe_allow_html=True)
-        st.info("No data available")
-        return
-    
-    # Section title
-    st.markdown(f'<div class="section-title">{title}</div>', unsafe_allow_html=True)
-    
-    # Top 3 cards
-    if len(crew_data) >= 1:
-        cols = st.columns(min(3, len(crew_data)))
+        
+        # Top 3 cards - ensure we always have 3 slots
+        cols = st.columns(3)
         ranks = ["🥇", "🥈", "🥉"]
         
-        for i, (_, row) in enumerate(crew_data.head(3).iterrows()):
+        for i in range(3):
             with cols[i]:
-                st.markdown(f"""
-                <div class="scorecard">
-                    <div class="scorecard-rank">{ranks[i]}</div>
-                    <div class="scorecard-name">{row['Crew_Name']}</div>
-                    <div>
-                        <div class="scorecard-sales">{row['Total Bottles Credited']}</div>
-                        <div class="scorecard-label">Bottles Credited</div>
+                if i < len(crew_data):
+                    row = crew_data.iloc[i]
+                    st.markdown(f"""
+                    <div class="scorecard">
+                        <div class="scorecard-rank">{ranks[i]}</div>
+                        <div class="scorecard-name">{row['Crew_Name']}</div>
+                        <div>
+                            <div class="scorecard-sales">{row['Total Bottles Credited']}</div>
+                            <div class="scorecard-label">Bottles Credited</div>
+                        </div>
                     </div>
-                </div>
-                """, unsafe_allow_html=True)
-    
-    # Remaining positions (4-10) in a styled list
-    if len(crew_data) > 3:
-        remaining_crew = crew_data.iloc[3:10]
+                    """, unsafe_allow_html=True)
+                else:
+                    # Empty placeholder to maintain layout
+                    st.markdown(f"""
+                    <div class="scorecard" style="opacity: 0.3; border-color: rgba(255,255,255,0.2);">
+                        <div class="scorecard-rank">{ranks[i]}</div>
+                        <div class="scorecard-name">No Data</div>
+                        <div>
+                            <div class="scorecard-sales">0</div>
+                            <div class="scorecard-label">Bottles Credited</div>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
         
-        # Build the complete HTML string properly
-        rows_html = ""
-        for idx, (_, row) in enumerate(remaining_crew.iterrows()):
-            position = idx + 4
-            crew_name = str(row['Crew_Name']).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            bottles = int(row['Total Bottles Credited'])
+        # Remaining positions (4-10) in a styled list - always show same height container
+        remaining_crew = crew_data.iloc[3:10] if len(crew_data) > 3 else pd.DataFrame()
+        
+        if not remaining_crew.empty:
+            rows_html = ""
+            for idx, (_, row) in enumerate(remaining_crew.iterrows()):
+                position = idx + 4
+                crew_name = str(row['Crew_Name']).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                bottles = int(row['Total Bottles Credited'])
+                
+                rows_html += f"""
+                <div class="top-10-row">
+                    <div class="position-number">#{position}</div>
+                    <div class="crew-name">{crew_name}</div>
+                    <div class="bottles-count">{bottles} bottles</div>
+                </div>"""
             
-            rows_html += f"""
-            <div class="top-10-row">
-                <div class="position-number">#{position}</div>
-                <div class="crew-name">{crew_name}</div>
-                <div class="bottles-count">{bottles} bottles</div>
-            </div>"""
-        
-        # Render the complete list
-        complete_html = f'<div class="top-10-list">{rows_html}</div>'
-        st.markdown(complete_html, unsafe_allow_html=True)
+            # Fill remaining slots with empty rows to maintain consistent height
+            for i in range(len(remaining_crew), 7):
+                position = i + 4
+                rows_html += f"""
+                <div class="top-10-row" style="opacity: 0.3;">
+                    <div class="position-number">#{position}</div>
+                    <div class="crew-name">No Data</div>
+                    <div class="bottles-count">0 bottles</div>
+                </div>"""
+            
+            complete_html = f'<div class="top-10-list">{rows_html}</div>'
+            st.markdown(complete_html, unsafe_allow_html=True)
+        else:
+            # Create empty list container to maintain height
+            rows_html = ""
+            for i in range(7):
+                position = i + 4
+                rows_html += f"""
+                <div class="top-10-row" style="opacity: 0.3;">
+                    <div class="position-number">#{position}</div>
+                    <div class="crew-name">No Data</div>
+                    <div class="bottles-count">0 bottles</div>
+                </div>"""
+            
+            complete_html = f'<div class="top-10-list">{rows_html}</div>'
+            st.markdown(complete_html, unsafe_allow_html=True)
 
 # --- Main App ---
 st_autorefresh(interval=30 * 1000, key="data_refresher")
