@@ -9,60 +9,54 @@ st.set_page_config(page_title="Flight Crew Prize Pool", layout="centered")
 ## Define the URL to your CSV file on GitHub
 CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flights_sales.csv'
 
-# --- Main CSS (with New White Theme and Responsive Images) ---
-st.markdown("""
-<style>
-    /* ## CHANGED: White Theme */
-    body {
-        color: #333; /* Default text color for the app */
-    }
-    .stApp {
-        background-color: #FFFFFF;
-    }
-    div[data-testid="stVerticalBlock"] {
-        gap: 0.75rem;
-    }
-    .stApp > header {
-        display: none;
-    }
-    
-    /* Responsive Image Container */
-    .responsive-image-container {
-        width: 100%;
-        text-align: center;
-        margin: 1rem 0;
-    }
-    
-    .responsive-image {
-        max-width: 100%;
-        height: auto;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    
-    /* Desktop Image (default) */
-    .desktop-image {
-        display: block;
-    }
-    
-    /* Mobile Image (hidden by default) */
-    .mobile-image {
-        display: none;
-    }
-    
-    /* Media Query for Mobile Devices */
-    @media (max-width: 768px) {
-        .desktop-image {
+# --- Main CSS (with Background Images) ---
+def apply_background_css(desktop_bg_url, mobile_bg_url):
+    st.markdown(f"""
+    <style>
+        /* Background Images */
+        .stApp {{
+            background-image: url('{desktop_bg_url}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }}
+        
+        /* Mobile Background */
+        @media (max-width: 768px) {{
+            .stApp {{
+                background-image: url('{mobile_bg_url}');
+                background-attachment: scroll; /* Better for mobile */
+            }}
+        }}
+        
+        /* App Styling */
+        body {{
+            color: #333;
+        }}
+        
+        div[data-testid="stVerticalBlock"] {{
+            gap: 0.75rem;
+        }}
+        
+        .stApp > header {{
             display: none;
-        }
-        .mobile-image {
-            display: block;
-        }
-    }
+        }}
+        
+        /* Content overlay to ensure readability */
+        .main-content {{
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }}
     
     .scorecard {
-        background-color: #FFFFFF;
-        border: 2px solid #00ff41; /* Bright green outline */
+        background-color: rgba(255, 255, 255, 0.95);
+        border: 2px solid #00ff41;
         border-radius:15px;
         padding:1.5rem;
         text-align:center;
@@ -71,6 +65,8 @@ st.markdown("""
         flex-direction:column;
         justify-content:center;
         gap:0.5rem;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     }
     .scorecard-rank{font-size:2.5rem;font-weight:bold;margin-bottom:0.25rem}
     .scorecard-name{color:#333;font-size:1.4rem;font-weight:bold;word-wrap:break-word}
@@ -83,15 +79,14 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# --- Function to add responsive images ---
-def add_responsive_images(desktop_image_url, mobile_image_url):
-    """Add responsive images that change based on screen size"""
-    st.markdown(f"""
-    <div class="responsive-image-container">
-        <img src="{desktop_image_url}" class="responsive-image desktop-image" alt="AirAsia Move Desktop Banner">
-        <img src="{mobile_image_url}" class="responsive-image mobile-image" alt="AirAsia Move Mobile Banner">
-    </div>
-    """, unsafe_allow_html=True)
+# --- Function to wrap content in overlay ---
+def create_content_wrapper():
+    """Create a semi-transparent overlay for content"""
+    st.markdown('<div class="main-content">', unsafe_allow_html=True)
+
+def close_content_wrapper():
+    """Close the content wrapper"""
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # --- Cached Data Functions for Performance ---
@@ -150,11 +145,13 @@ def PrizePoolComponent(amount):
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
         body{{margin:0;padding:0;}}
         .prize-pool-container{{
-            background-color: #FFFFFF;
-            border: 3px solid #00ff41; /* Bright green outline */
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 3px solid #00ff41;
             border-radius: 20px;
             padding: 2rem;
             text-align: center;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }}
         .prize-pool-label{{color:#555;font-size:1.5rem;text-transform:uppercase;letter-spacing:2px;}}
         .prize-pool-value{{
@@ -186,11 +183,13 @@ def PrizePoolComponent(amount):
 # --- Streamlit App Layout ---
 st_autorefresh(interval=30 * 1000, key="data_refresher")
 
-# Add responsive promotional images at the top
-# FIXED: Use proper raw GitHub URLs for images
+# Apply background images
 desktop_image_url = "https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/suntory-desktop.jpg"
 mobile_image_url = "https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/suntory-mobile.jpg"
-add_responsive_images(desktop_image_url, mobile_image_url)
+apply_background_css(desktop_image_url, mobile_image_url)
+
+# Create content overlay
+create_content_wrapper()
 
 df = load_data(CSV_URL)
 
@@ -227,3 +226,6 @@ if df is not None and not df.empty:
         st.info("No flight data available to display.")
 else:
     st.warning("Could not load data from the specified GitHub URL. Please check the URL and ensure the repository is public.")
+
+# Close content overlay
+close_content_wrapper()
