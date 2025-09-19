@@ -63,6 +63,61 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
         .scorecard-name{{color:#FFFFFF;font-size:1.4rem;font-weight:bold;word-wrap:break-word;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);}}
         .scorecard-sales{{color:#00ff41;font-size:2rem;font-weight:bold;line-height:1;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);}}
         .scorecard-label{{color:rgba(255, 255, 255, 0.8);font-size:0.9rem;}}
+        
+        /* Top 10 list styling */
+        .top-10-container {{
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }}
+        .top-10-title {{
+            color: #FFFFFF;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }}
+        .crew-row {{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }}
+        .crew-row:hover {{
+            opacity: 1;
+            transform: translateX(5px);
+        }}
+        .crew-position {{
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: bold;
+            font-size: 1.1rem;
+            width: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }}
+        .crew-name-small {{
+            color: #FFFFFF;
+            font-weight: 600;
+            flex: 1;
+            margin-left: 1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }}
+        .crew-bottles-small {{
+            color: #00ff41;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -120,7 +175,30 @@ def calculate_flight_metrics(_df):
             
     return prize_pool, ak_crew, d7_crew
 
-# --- Prize Pool Component (no white background) ---
+# --- Function to create top 10 list ---
+def create_top_10_list(crew_data, title):
+    """Create a top 10 list showing positions 4-10"""
+    if len(crew_data) <= 3:
+        return ""
+    
+    remaining_crew = crew_data.iloc[3:10]  # Get positions 4-10
+    
+    html = f"""
+    <div class="top-10-container">
+        <div class="top-10-title">{title} - Positions 4-10</div>
+    """
+    
+    for i, (_, row) in enumerate(remaining_crew.iterrows(), start=4):
+        html += f"""
+        <div class="crew-row">
+            <div class="crew-position">#{i}</div>
+            <div class="crew-name-small">{row['Crew_Name']}</div>
+            <div class="crew-bottles-small">{row['Total Bottles Credited']} bottles</div>
+        </div>
+        """
+    
+    html += "</div>"
+    return html
 def PrizePoolComponent(amount):
     """Renders the animated prize pool component."""
     html_string = f"""
@@ -185,6 +263,7 @@ if df is not None and not df.empty:
     # AirAsia Leaderboard
     st.markdown("### 🛩️ AirAsia Top Performers", unsafe_allow_html=True)
     if not ak_crew.empty:
+        # Top 3 cards
         cols = st.columns(min(3, len(ak_crew)))
         ranks = ["🥇", "🥈", "🥉"]
         
@@ -203,10 +282,15 @@ if df is not None and not df.empty:
                     """,
                     unsafe_allow_html=True
                 )
+        
+        # Top 10 list (positions 4-10)
+        if len(ak_crew) > 3:
+            st.markdown(create_top_10_list(ak_crew, "AirAsia"), unsafe_allow_html=True)
     
     # AirAsia X Leaderboard  
     st.markdown("### ✈️ AirAsia X Top Performers", unsafe_allow_html=True)
     if not d7_crew.empty:
+        # Top 3 cards
         cols = st.columns(min(3, len(d7_crew)))
         ranks = ["🥇", "🥈", "🥉"]
         
@@ -225,5 +309,9 @@ if df is not None and not df.empty:
                     """,
                     unsafe_allow_html=True
                 )
+        
+        # Top 10 list (positions 4-10)
+        if len(d7_crew) > 3:
+            st.markdown(create_top_10_list(d7_crew, "AirAsia X"), unsafe_allow_html=True)
 else:
     st.warning("Could not load data from the specified GitHub URL. Please check the URL and ensure the repository is public.")
