@@ -296,10 +296,12 @@ def create_leaderboard_section(crew_data, title):
     # Remaining positions (4-10) in a styled list
     if len(crew_data) > 3:
         remaining_html = '<div class="top-10-list">'
-        for i, (_, row) in enumerate(crew_data.iloc[3:10].iterrows(), start=4):
+        # Fixed: Use the actual index position from the original dataframe
+        for idx, (_, row) in enumerate(crew_data.iloc[3:10].iterrows()):
+            position = idx + 4  # This correctly gives us positions 4, 5, 6, 7, 8, 9, 10
             remaining_html += f"""
             <div class="top-10-row">
-                <div class="position-number">#{i}</div>
+                <div class="position-number">#{position}</div>
                 <div class="crew-name">{row['Crew_Name']}</div>
                 <div class="bottles-count">{row['Total Bottles Credited']} bottles</div>
             </div>
