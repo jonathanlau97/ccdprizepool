@@ -295,24 +295,25 @@ def create_leaderboard_section(crew_data, title):
     
     # Remaining positions (4-10) in a styled list
     if len(crew_data) > 3:
-        remaining_crew = crew_data.iloc[3:10]
-        remaining_html = '<div class="top-10-list">'
-        
-        for idx, (_, row) in enumerate(remaining_crew.iterrows()):
-            position = idx + 4  # This correctly gives us positions 4, 5, 6, 7, 8, 9, 10
-            crew_name = str(row['Crew_Name']).replace('"', '&quot;').replace("'", "&#x27;")
-            bottles = int(row['Total Bottles Credited'])
+        with st.container():
+            st.markdown('<div class="top-10-list">', unsafe_allow_html=True)
             
-            remaining_html += f'''
-            <div class="top-10-row">
-                <div class="position-number">#{position}</div>
-                <div class="crew-name">{crew_name}</div>
-                <div class="bottles-count">{bottles} bottles</div>
-            </div>
-            '''
-        
-        remaining_html += '</div>'
-        st.markdown(remaining_html, unsafe_allow_html=True)
+            remaining_crew = crew_data.iloc[3:10]
+            for idx, (_, row) in enumerate(remaining_crew.iterrows()):
+                position = idx + 4
+                crew_name = row['Crew_Name']
+                bottles = row['Total Bottles Credited']
+                
+                # Create each row as a separate component
+                col1, col2, col3 = st.columns([1, 4, 2])
+                with col1:
+                    st.markdown(f'<div style="color: #00ff41; font-weight: bold; font-size: 1.2rem;">#{position}</div>', unsafe_allow_html=True)
+                with col2:
+                    st.markdown(f'<div style="color: #FFFFFF; font-weight: 600;">{crew_name}</div>', unsafe_allow_html=True)
+                with col3:
+                    st.markdown(f'<div style="color: #00ff41; font-weight: bold;">{bottles} bottles</div>', unsafe_allow_html=True)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # --- Main App ---
 st_autorefresh(interval=30 * 1000, key="data_refresher")
