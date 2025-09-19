@@ -1,5 +1,0 @@
-Flight_ID,Flight_Date,Crew_ID,Crew_Name,Bottles_Sold_on_Flight,Airline_Code
-AK123,2024-01-15,C001,John Doe,15,AK
-D7456,2024-01-15,C002,Jane Smith,20,D7
-AK789,2024-01-16,C003,Mike Johnson,12,AK
-D7012,2024-01-16,C004,Sarah Wilson,18,D7
