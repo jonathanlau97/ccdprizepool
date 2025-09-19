@@ -44,16 +44,6 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             display: none;
         }}
         
-        /* Main content wrapper */
-        .main-wrapper {{
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 1rem 0;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }}
-        
         /* Section titles */
         .section-title {{
             color: #FFFFFF;
@@ -393,3 +383,4 @@ else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
+
