@@ -334,11 +334,14 @@ if df is not None and not df.empty:
     # Prize Pool
     PrizePoolComponent(prize_pool)
     
-    # AirAsia Leaderboard
-    create_leaderboard_section(ak_crew, "🛩️ AirAsia Top Performers")
+    # Side-by-side leaderboards for larger screens
+    col1, col2 = st.columns([1, 1], gap="large")
     
-    # AirAsia X Leaderboard
-    create_leaderboard_section(d7_crew, "✈️ AirAsia X Top Performers")
+    with col1:
+        create_leaderboard_section(ak_crew, "🛩️ AirAsia Top Performers")
+    
+    with col2:
+        create_leaderboard_section(d7_crew, "✈️ AirAsia X Top Performers")
     
 else:
     st.warning("Could not load data from the GitHub URL.")
