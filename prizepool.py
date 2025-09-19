@@ -177,28 +177,26 @@ def calculate_flight_metrics(_df):
 
 # --- Function to create top 10 list ---
 def create_top_10_list(crew_data, title):
-    """Create a top 10 list showing positions 4-10"""
+    """Create a top 10 list showing positions 4-10 using Streamlit components"""
     if len(crew_data) <= 3:
-        return ""
+        return
     
     remaining_crew = crew_data.iloc[3:10]  # Get positions 4-10
     
-    html = f"""
+    st.markdown(f"""
     <div class="top-10-container">
         <div class="top-10-title">{title} - Positions 4-10</div>
-    """
+    </div>
+    """, unsafe_allow_html=True)
     
     for i, (_, row) in enumerate(remaining_crew.iterrows(), start=4):
-        html += f"""
-        <div class="crew-row">
-            <div class="crew-position">#{i}</div>
-            <div class="crew-name-small">{row['Crew_Name']}</div>
-            <div class="crew-bottles-small">{row['Total Bottles Credited']} bottles</div>
-        </div>
-        """
-    
-    html += "</div>"
-    return html
+        col1, col2, col3 = st.columns([1, 4, 2])
+        with col1:
+            st.markdown(f"**#{i}**")
+        with col2:
+            st.markdown(f"**{row['Crew_Name']}**")
+        with col3:
+            st.markdown(f"**{row['Total Bottles Credited']} bottles**")
 def PrizePoolComponent(amount):
     """Renders the animated prize pool component."""
     html_string = f"""
@@ -285,7 +283,7 @@ if df is not None and not df.empty:
         
         # Top 10 list (positions 4-10)
         if len(ak_crew) > 3:
-            st.markdown(create_top_10_list(ak_crew, "AirAsia"), unsafe_allow_html=True)
+            create_top_10_list(ak_crew, "AirAsia")
     
     # AirAsia X Leaderboard  
     st.markdown("### ✈️ AirAsia X Top Performers", unsafe_allow_html=True)
@@ -312,6 +310,6 @@ if df is not None and not df.empty:
         
         # Top 10 list (positions 4-10)
         if len(d7_crew) > 3:
-            st.markdown(create_top_10_list(d7_crew, "AirAsia X"), unsafe_allow_html=True)
+            create_top_10_list(d7_crew, "AirAsia X")
 else:
     st.warning("Could not load data from the specified GitHub URL. Please check the URL and ensure the repository is public.")
