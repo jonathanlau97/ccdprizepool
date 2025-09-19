@@ -44,21 +44,100 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             display: none;
         }}
         
-        /* Content overlay to ensure readability */
+        /* Content overlay removed - no more white background */
         .main-content {{
-            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 2rem;
             margin: 1rem;
+        }}
+        
+        /* Leaderboard styling */
+        .leaderboard-container {{
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }}
+        
+        .leaderboard {{
+            flex: 1;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 1.5rem;
             backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }}
+        
+        .leaderboard-title {{
+            color: #FFFFFF;
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }}
+        
+        .crew-row {{
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }}
+        
+        .crew-row.faded {{
+            opacity: 0.4;
+            background: rgba(255, 255, 255, 0.1);
+        }}
+        
+        .crew-row:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }}
+        
+        .crew-rank {{
+            font-size: 1.5rem;
+            font-weight: bold;
+            width: 3rem;
+            text-align: center;
+            color: #FFFFFF;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }}
+        
+        .crew-info {{
+            flex: 1;
+            margin-left: 1rem;
+        }}
+        
+        .crew-name {{
+            color: #FFFFFF;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            margin-bottom: 0.2rem;
+        }}
+        
+        .crew-bottles {{
+            color: #00ff41;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }}
+        
+        .crew-bottles-label {{
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
         }}
         
         /* Scorecard styling */
         
-        /* Scorecard styling */
+        /* Scorecard styling - removed white background */
         .scorecard {{
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(255, 255, 255, 0.15);
             border: 2px solid #00ff41;
             border-radius:15px;
             padding:1.5rem;
@@ -68,28 +147,72 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             flex-direction:column;
             justify-content:center;
             gap:0.5rem;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }}
-        .scorecard-rank{{font-size:2.5rem;font-weight:bold;margin-bottom:0.25rem}}
-        .scorecard-name{{color:#333;font-size:1.4rem;font-weight:bold;word-wrap:break-word}}
-        .scorecard-id{{color:#555;font-size:1rem;}}
-        .scorecard-sales{{color:#00c851;font-size:2rem;font-weight:bold;line-height:1;}}
-        .scorecard-label{{color:#555;font-size:0.9rem;}}
-        .prize-share-value{{color:#ff8800;font-size:1.5rem;font-weight:bold;line-height:1;}}
-        .prize-share-label{{color:#555;font-size:0.8rem;text-transform:uppercase;}}
+        .scorecard-rank{{font-size:2.5rem;font-weight:bold;margin-bottom:0.25rem;color:#FFFFFF;text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);}}
+        .scorecard-name{{color:#FFFFFF;font-size:1.4rem;font-weight:bold;word-wrap:break-word;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);}}
+        .scorecard-sales{{color:#00ff41;font-size:2rem;font-weight:bold;line-height:1;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);}}
+        .scorecard-label{{color:rgba(255, 255, 255, 0.8);font-size:0.9rem;}}
+        .prize-share-value{{color:#ff8800;font-size:1.5rem;font-weight:bold;line-height:1;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);}}
+        .prize-share-label{{color:rgba(255, 255, 255, 0.8);font-size:0.8rem;text-transform:uppercase;}}
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {{
+            .leaderboard-container {{
+                flex-direction: column;
+                gap: 1rem;
+            }}
+        }}
     </style>
     """, unsafe_allow_html=True)
 
 
 # --- Function to wrap content in overlay ---
 def create_content_wrapper():
-    """Create a semi-transparent overlay for content"""
+    """Create a content wrapper without white background"""
     st.markdown('<div class="main-content">', unsafe_allow_html=True)
 
 def close_content_wrapper():
     """Close the content wrapper"""
     st.markdown('</div>', unsafe_allow_html=True)
+
+# --- Function to create leaderboard ---
+def create_leaderboard(crew_data, airline_name, airline_code):
+    """Create a leaderboard for specific airline"""
+    if crew_data.empty:
+        return f"""
+        <div class="leaderboard">
+            <div class="leaderboard-title">{airline_name}</div>
+            <div style="color: rgba(255, 255, 255, 0.8); text-align: center; padding: 2rem;">
+                No data available
+            </div>
+        </div>
+        """
+    
+    html = f"""
+    <div class="leaderboard">
+        <div class="leaderboard-title">{airline_name}</div>
+    """
+    
+    ranks = ["🥇", "🥈", "🥉"]
+    
+    for i, (_, row) in enumerate(crew_data.iterrows()):
+        rank_display = ranks[i] if i < 3 else f"#{i+1}"
+        faded_class = "faded" if i >= 3 else ""
+        
+        html += f"""
+        <div class="crew-row {faded_class}">
+            <div class="crew-rank">{rank_display}</div>
+            <div class="crew-info">
+                <div class="crew-name">{row['Crew_Name']}</div>
+                <div class="crew-bottles">{row['Total Bottles Credited']}<span class="crew-bottles-label">bottles</span></div>
+            </div>
+        </div>
+        """
+    
+    html += "</div>"
+    return html
 
 
 # --- Cached Data Functions for Performance ---
@@ -98,7 +221,7 @@ def load_data(url):
     """Reads, cleans, and caches the CSV data from a URL."""
     try:
         df = pd.read_csv(url)
-        required_cols = ['Flight_ID', 'Flight_Date', 'Crew_ID', 'Crew_Name', 'Bottles_Sold_on_Flight']
+        required_cols = ['Flight_ID', 'Flight_Date', 'Crew_ID', 'Crew_Name', 'Bottles_Sold_on_Flight', 'Airline_Code']
         if all(col in df.columns for col in required_cols):
             df['Flight_Date'] = pd.to_datetime(df['Flight_Date'], errors='coerce')
             df.dropna(subset=['Flight_Date'], inplace=True)
@@ -112,28 +235,28 @@ def load_data(url):
 
 @st.cache_data
 def calculate_flight_metrics(_df):
-    """Calculates prize pool and top crew from a dataframe."""
+    """Calculates prize pool and airline leaderboards from a dataframe."""
     if _df.empty:
-        return 0.00, pd.DataFrame()
+        return 0.00, pd.DataFrame(), pd.DataFrame()
         
     unique_flights_df = _df.drop_duplicates(subset=['Flight_ID'])
     total_bottles = unique_flights_df['Bottles_Sold_on_Flight'].sum()
     prize_pool = total_bottles * 5.00
     
-    top_crew = _df.groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
+    # Create leaderboards by airline
+    ak_crew = _df[_df['Airline_Code'] == 'AK'].groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
                  .sum() \
                  .reset_index(name='Total Bottles Credited') \
                  .sort_values(by='Total Bottles Credited', ascending=False) \
-                 .head(3)
-
-    if not top_crew.empty:
-        total_top_crew_bottles = top_crew['Total Bottles Credited'].sum()
-        if total_top_crew_bottles > 0:
-            top_crew['Prize Share'] = (top_crew['Total Bottles Credited'] / total_top_crew_bottles) * prize_pool
-        else:
-            top_crew['Prize Share'] = 0.0
+                 .head(10)
+                 
+    d7_crew = _df[_df['Airline_Code'] == 'D7'].groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
+                 .sum() \
+                 .reset_index(name='Total Bottles Credited') \
+                 .sort_values(by='Total Bottles Credited', ascending=False) \
+                 .head(10)
             
-    return prize_pool, top_crew
+    return prize_pool, ak_crew, d7_crew
 
 
 # --- Self-Contained Prize Pool Component with Embedded Styles ---
@@ -148,21 +271,21 @@ def PrizePoolComponent(amount):
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
         body{{margin:0;padding:0;}}
         .prize-pool-container{{
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(255, 255, 255, 0.15);
             border: 3px solid #00ff41;
             border-radius: 20px;
             padding: 2rem;
             text-align: center;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }}
-        .prize-pool-label{{color:#555;font-size:1.5rem;text-transform:uppercase;letter-spacing:2px;}}
+        .prize-pool-label{{color:rgba(255, 255, 255, 0.9);font-size:1.5rem;text-transform:uppercase;letter-spacing:2px;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);}}
         .prize-pool-value{{
             font-family:'Orbitron',sans-serif;
-            color: #00c851; /* Darker green for better contrast on white */
+            color: #00ff41;
             font-size:clamp(3rem,10vw,5rem);
             font-weight:700;
-            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5); /* Softer text glow */
+            text-shadow: 0 0 20px rgba(0, 255, 65, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.5);
             line-height:1.1;
         }}
     </style>
@@ -191,44 +314,21 @@ desktop_image_url = "https://raw.githubusercontent.com/jonathanlau97/ccdprizepoo
 mobile_image_url = "https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/suntory-mobile.jpg"
 apply_background_css(desktop_image_url, mobile_image_url)
 
-# Create content overlay
-create_content_wrapper()
-
 df = load_data(CSV_URL)
 
 if df is not None and not df.empty:
-    prize_pool, top_crew = calculate_flight_metrics(df)
+    prize_pool, ak_crew, d7_crew = calculate_flight_metrics(df)
     
+    # Prize Pool Component (no white background overlay)
     PrizePoolComponent(prize_pool)
     
-    cols = st.columns(3)
-    ranks = ["🥇", "🥈", "🥉"]
-
-    if not top_crew.empty:
-        for i, (index, row) in enumerate(top_crew.iterrows()):
-            with cols[i]:
-                st.markdown(
-                    f"""
-                    <div class="scorecard">
-                        <div class="scorecard-rank">{ranks[i]}</div>
-                        <div class="scorecard-name">{row['Crew_Name']}</div>
-                        <div class="scorecard-id">ID: {row['Crew_ID']}</div>
-                        <div>
-                            <div class="scorecard-sales">{row['Total Bottles Credited']}</div>
-                            <div class="scorecard-label">Bottles Credited</div>
-                        </div>
-                        <div>
-                            <div class="prize-share-value">RM {row.get('Prize Share', 0):,.2f}</div>
-                            <div class="prize-share-label">Prize Share</div>
-                        </div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-    else:
-        st.info("No flight data available to display.")
+    # Create side-by-side leaderboards
+    st.markdown("""
+    <div class="leaderboard-container">
+    """ + create_leaderboard(ak_crew, "AirAsia", "AK") + 
+    create_leaderboard(d7_crew, "AirAsia X", "D7") + """
+    </div>
+    """, unsafe_allow_html=True)
+    
 else:
     st.warning("Could not load data from the specified GitHub URL. Please check the URL and ensure the repository is public.")
-
-# Close content overlay
-close_content_wrapper()
