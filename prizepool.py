@@ -195,15 +195,15 @@ def calculate_flight_metrics(_df):
     # AK leaderboard
     ak_crew = _df[_df['Airline_Code'] == 'AK'].groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
                  .sum() \
-                 .reset_index(name='Total Bottles Credited') \
-                 .sort_values(by='Total Bottles Credited', ascending=False) \
+                 .reset_index(name='Total Bottles Sold') \
+                 .sort_values(by='Total Bottles Sold', ascending=False) \
                  .head(10)
                  
     # D7 leaderboard
     d7_crew = _df[_df['Airline_Code'] == 'D7'].groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
                  .sum() \
-                 .reset_index(name='Total Bottles Credited') \
-                 .sort_values(by='Total Bottles Credited', ascending=False) \
+                 .reset_index(name='Total Bottles Sold') \
+                 .sort_values(by='Total Bottles Sold', ascending=False) \
                  .head(10)
             
     return prize_pool, ak_crew, d7_crew
@@ -289,8 +289,8 @@ def create_leaderboard_section(crew_data, title):
                         <div class="scorecard-rank">{ranks[i]}</div>
                         <div class="scorecard-name">{row['Crew_Name']}</div>
                         <div>
-                            <div class="scorecard-sales">{row['Total Bottles Credited']}</div>
-                            <div class="scorecard-label">Bottles Credited</div>
+                            <div class="scorecard-sales">{row['Total Bottles Sold']}</div>
+                            <div class="scorecard-label">Bottles Sold</div>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -302,7 +302,7 @@ def create_leaderboard_section(crew_data, title):
                         <div class="scorecard-name">No Data</div>
                         <div>
                             <div class="scorecard-sales">0</div>
-                            <div class="scorecard-label">Bottles Credited</div>
+                            <div class="scorecard-label">Bottles Sold</div>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -315,7 +315,7 @@ def create_leaderboard_section(crew_data, title):
             for idx, (_, row) in enumerate(remaining_crew.iterrows()):
                 position = idx + 4
                 crew_name = str(row['Crew_Name']).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-                bottles = int(row['Total Bottles Credited'])
+                bottles = int(row['Total Bottles Sold'])
                 
                 rows_html += f"""
                 <div class="top-10-row">
@@ -383,5 +383,6 @@ else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
