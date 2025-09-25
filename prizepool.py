@@ -213,29 +213,48 @@ def calculate_flight_metrics(_df):
     if _df.empty:
         return 0.00, pd.DataFrame(), pd.DataFrame(), 0
         
-    # Round down bottles sold to nearest whole number and sum
-    total_bottles = _df['Bottles_Sold_on_Flight'].apply(lambda x: int(x)).sum()
+    import math
+    
+    # Sum by airline group first, then apply rounding
+    ak_crew = _df[_df['Airline_Code'] == 'AK'].copy()
+    d7_crew = _df[_df['Airline_Code'] == 'D7'].copy()
+    
+    # Calculate total bottles by airline group and apply rounding
+    ak_total_raw = ak_crew['Bottles_Sold_on_Flight'].sum()
+    ak_total_rounded = math.ceil(ak_total_raw) if ak_total_raw > 0 else 0
+    
+    d7_total_raw = d7_crew['Bottles_Sold_on_Flight'].sum()
+    d7_total_rounded = int(d7_total_raw)  # Floor for D7
+    
+    # Total bottles for prize pool is sum of both airline totals after rounding
+    total_bottles = ak_total_rounded + d7_total_rounded
     prize_pool = total_bottles * 5.00
     
-    # AK leaderboard (also round down bottles for leaderboard)
-    ak_crew = _df[_df['Airline_Code'] == 'AK'].copy()
-    ak_crew['Bottles_Sold_on_Flight'] = ak_crew['Bottles_Sold_on_Flight'].apply(lambda x: int(x))
-    ak_crew = ak_crew.groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
-                     .sum() \
-                     .reset_index(name='Total Bottles Sold') \
-                     .sort_values(by='Total Bottles Sold', ascending=False) \
-                     .head(10)
+    # AK leaderboard - sum per crew, then round up individual totals
+    ak_leaderboard = ak_crew.groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
+                           .sum() \
+                           .reset_index()
+    # Round up the total for each crew member
+    ak_leaderboard['Total Bottles Sold'] = ak_leaderboard['Bottles_Sold_on_Flight'].apply(
+        lambda x: math.ceil(x) if x > 0 else 0
+    )
+    ak_leaderboard = ak_leaderboard.drop('Bottles_Sold_on_Flight', axis=1) \
+                                   .sort_values(by='Total Bottles Sold', ascending=False) \
+                                   .head(10)
                  
-    # D7 leaderboard (also round down bottles for leaderboard)
-    d7_crew = _df[_df['Airline_Code'] == 'D7'].copy()
-    d7_crew['Bottles_Sold_on_Flight'] = d7_crew['Bottles_Sold_on_Flight'].apply(lambda x: int(x))
-    d7_crew = d7_crew.groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
-                     .sum() \
-                     .reset_index(name='Total Bottles Sold') \
-                     .sort_values(by='Total Bottles Sold', ascending=False) \
-                     .head(10)
+    # D7 leaderboard - sum per crew, then round down individual totals
+    d7_leaderboard = d7_crew.groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
+                           .sum() \
+                           .reset_index()
+    # Round down (floor) the total for each crew member
+    d7_leaderboard['Total Bottles Sold'] = d7_leaderboard['Bottles_Sold_on_Flight'].apply(
+        lambda x: int(x)  # This floors the value
+    )
+    d7_leaderboard = d7_leaderboard.drop('Bottles_Sold_on_Flight', axis=1) \
+                                   .sort_values(by='Total Bottles Sold', ascending=False) \
+                                   .head(10)
             
-    return prize_pool, ak_crew, d7_crew, total_bottles
+    return prize_pool, ak_leaderboard, d7_leaderboard, total_bottles
 
 # --- Prize Pool Component ---
 def PrizePoolComponent(amount, total_bottles):
@@ -433,7 +452,3 @@ else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
-
-
-
-
