@@ -7,7 +7,7 @@ from streamlit_autorefresh import st_autorefresh
 st.set_page_config(page_title="Flight Crew Prize Pool", layout="wide")
 
 ## Define the URL to your CSV file on GitHub
-CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flight_sales.csv'
+CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flights_sales.csv'
 
 # --- Background CSS ---
 def apply_background_css(desktop_bg_url, mobile_bg_url):
@@ -219,15 +219,9 @@ def calculate_flight_metrics(_df):
     ak_crew = _df[_df['Airline_Code'] == 'AK'].copy()
     d7_crew = _df[_df['Airline_Code'] == 'D7'].copy()
     
-    # Calculate total bottles by airline group and apply rounding
-    ak_total_raw = ak_crew['crew_sold_quantity'].sum()
-    ak_total_rounded = math.ceil(ak_total_raw) if ak_total_raw > 0 else 0
-    
-    d7_total_raw = d7_crew['crew_sold_quantity'].sum()
-    d7_total_rounded = int(d7_total_raw)  # Floor for D7
-    
-    # Total bottles for prize pool is sum of both airline totals after rounding
-    total_bottles = ak_total_rounded + d7_total_rounded
+    # Calculate total bottles by summing all Bottles_Sold_on_Flight first, then round up
+    total_bottles_raw = _df['Bottles_Sold_on_Flight'].sum()
+    total_bottles = math.ceil(total_bottles_raw) if total_bottles_raw > 0 else 0
     prize_pool = total_bottles * 5.00
     
     # AK leaderboard - sum per crew, then round up individual totals
@@ -452,4 +446,3 @@ else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
-
