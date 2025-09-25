@@ -44,6 +44,31 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             display: none;
         }}
         
+        /* Header styling */
+        .main-header {{
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 2rem 0 1.5rem 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1.5rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            line-height: 1.4;
+        }}
+        
+        .toki-whisky {{
+            color: #FF8C00;
+            font-weight: bold;
+        }}
+        
+        .roku-gin {{
+            color: #FF8C00;
+            font-weight: bold;
+        }}
+        
         /* Section titles */
         .section-title {{
             color: #FFFFFF;
@@ -362,6 +387,13 @@ apply_background_css(desktop_image_url, mobile_image_url)
 # Wrap everything in a main container
 st.markdown('<div class="main-wrapper">', unsafe_allow_html=True)
 
+# Add header
+st.markdown('''
+<div class="main-header">
+    SELL ANY <span class="toki-whisky">TOKI WHISKY</span> OR <span class="roku-gin">ROKU GIN</span> TO STAND A CHANCE TO WIN.
+</div>
+''', unsafe_allow_html=True)
+
 df = load_data(CSV_URL)
 
 if df is not None and not df.empty:
@@ -383,6 +415,3 @@ else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
-
-
-
