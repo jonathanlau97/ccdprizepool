@@ -4,10 +4,10 @@ import streamlit.components.v1 as components
 from streamlit_autorefresh import st_autorefresh
 
 # --- Page Configuration ---
-st.set_page_config(page_title="Flight Crew Prize Pool", layout="centered")
+st.set_page_config(page_title="Flight Crew Prize Pool", layout="wide")
 
 ## Define the URL to your CSV file on GitHub
-CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flights_sales2.csv'
+CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flights_sales.csv'
 
 # --- Background CSS ---
 def apply_background_css(desktop_bg_url, mobile_bg_url):
@@ -211,10 +211,10 @@ def load_data(url):
 def calculate_flight_metrics(_df):
     """Calculates prize pool and leaderboards."""
     if _df.empty:
-        return 0.00, pd.DataFrame(), pd.DataFrame()
+        return 0.00, pd.DataFrame(), pd.DataFrame(), 0
         
-    unique_flights_df = _df.drop_duplicates(subset=['Flight_ID'])
-    total_bottles = unique_flights_df['Bottles_Sold_on_Flight'].sum()
+    # Round down bottles sold to nearest whole number and sum
+    total_bottles = _df['Bottles_Sold_on_Flight'].apply(lambda x: int(x)).sum()
     prize_pool = total_bottles * 5.00
     
     # AK leaderboard
@@ -231,10 +231,10 @@ def calculate_flight_metrics(_df):
                  .sort_values(by='Total Bottles Sold', ascending=False) \
                  .head(10)
             
-    return prize_pool, ak_crew, d7_crew
+    return prize_pool, ak_crew, d7_crew, total_bottles
 
 # --- Prize Pool Component ---
-def PrizePoolComponent(amount):
+def PrizePoolComponent(amount, total_bottles):
     """Renders the prize pool component."""
     html_string = f"""
     <!DOCTYPE html>
@@ -266,6 +266,17 @@ def PrizePoolComponent(amount):
             font-weight:700;
             text-shadow: 0 0 20px rgba(0, 255, 65, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.8);
             line-height:1.1;
+            margin-bottom: 1rem;
+        }}
+        .bottles-total{{
+            color:rgba(255, 255, 255, 0.9);
+            font-size:1.2rem;
+            font-weight:600;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }}
+        .bottles-number{{
+            color: #00ff41;
+            font-weight:700;
         }}
     </style>
     </head>
@@ -273,6 +284,9 @@ def PrizePoolComponent(amount):
         <div class="prize-pool-container">
             <div class="prize-pool-label">Prize Pool</div>
             <div id="prize-pool-counter" class="prize-pool-value"></div>
+            <div class="bottles-total">
+                Total Bottles Sold: <span class="bottles-number">{total_bottles:,}</span>
+            </div>
         </div>
         <script type="module">
           import {{ CountUp }} from 'https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js';
@@ -283,7 +297,7 @@ def PrizePoolComponent(amount):
     </body>
     </html>
     """
-    components.html(html_string, height=230)
+    components.html(html_string, height=280)
 
 # --- Create Leaderboard Section ---
 def create_leaderboard_section(crew_data, title):
@@ -415,4 +429,3 @@ else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
-
