@@ -7,7 +7,7 @@ from streamlit_autorefresh import st_autorefresh
 st.set_page_config(page_title="Flight Crew Prize Pool", layout="wide")
 
 ## Define the URL to your CSV file on GitHub
-CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flights_sales2.csv'
+CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flights_sales.csv'
 
 # --- Background CSS ---
 def apply_background_css(desktop_bg_url, mobile_bg_url):
@@ -217,19 +217,23 @@ def calculate_flight_metrics(_df):
     total_bottles = _df['Bottles_Sold_on_Flight'].apply(lambda x: int(x)).sum()
     prize_pool = total_bottles * 5.00
     
-    # AK leaderboard
-    ak_crew = _df[_df['Airline_Code'] == 'AK'].groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
-                 .sum() \
-                 .reset_index(name='Total Bottles Sold') \
-                 .sort_values(by='Total Bottles Sold', ascending=False) \
-                 .head(10)
+    # AK leaderboard (also round down bottles for leaderboard)
+    ak_crew = _df[_df['Airline_Code'] == 'AK'].copy()
+    ak_crew['Bottles_Sold_on_Flight'] = ak_crew['Bottles_Sold_on_Flight'].apply(lambda x: int(x))
+    ak_crew = ak_crew.groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
+                     .sum() \
+                     .reset_index(name='Total Bottles Sold') \
+                     .sort_values(by='Total Bottles Sold', ascending=False) \
+                     .head(10)
                  
-    # D7 leaderboard
-    d7_crew = _df[_df['Airline_Code'] == 'D7'].groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
-                 .sum() \
-                 .reset_index(name='Total Bottles Sold') \
-                 .sort_values(by='Total Bottles Sold', ascending=False) \
-                 .head(10)
+    # D7 leaderboard (also round down bottles for leaderboard)
+    d7_crew = _df[_df['Airline_Code'] == 'D7'].copy()
+    d7_crew['Bottles_Sold_on_Flight'] = d7_crew['Bottles_Sold_on_Flight'].apply(lambda x: int(x))
+    d7_crew = d7_crew.groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
+                     .sum() \
+                     .reset_index(name='Total Bottles Sold') \
+                     .sort_values(by='Total Bottles Sold', ascending=False) \
+                     .head(10)
             
     return prize_pool, ak_crew, d7_crew, total_bottles
 
@@ -411,10 +415,10 @@ st.markdown('''
 df = load_data(CSV_URL)
 
 if df is not None and not df.empty:
-    prize_pool, ak_crew, d7_crew = calculate_flight_metrics(df)
+    prize_pool, ak_crew, d7_crew, total_bottles = calculate_flight_metrics(df)
     
     # Prize Pool
-    PrizePoolComponent(prize_pool)
+    PrizePoolComponent(prize_pool, total_bottles)
     
     # Side-by-side leaderboards for larger screens
     col1, col2 = st.columns([1, 1], gap="large")
@@ -429,4 +433,3 @@ else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
-
