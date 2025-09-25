@@ -7,7 +7,7 @@ from streamlit_autorefresh import st_autorefresh
 st.set_page_config(page_title="Flight Crew Prize Pool", layout="wide")
 
 ## Define the URL to your CSV file on GitHub
-CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flight_sales.csv'
+CSV_URL = 'https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/flights_sales.csv'
 
 # --- Background CSS ---
 def apply_background_css(desktop_bg_url, mobile_bg_url):
@@ -94,7 +94,7 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             display:flex;
             flex-direction:column;
             justify-content:center;
-            gap:0.3rem;
+            gap:0.2rem;
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             margin-bottom: 1rem;
@@ -114,13 +114,20 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
             overflow-wrap: break-word;
             hyphens: auto;
+            margin-bottom: 0.3rem;
         }}
         .scorecard-sales{{
             color:#00ff41;
-            font-size:1.5rem;
+            font-size:1.4rem;
             font-weight:bold;
             line-height:1;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }}
+        .scorecard-actual{{
+            color:rgba(255, 255, 255, 0.8);
+            font-size:0.9rem;
+            font-style:italic;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         }}
         .scorecard-label{{
             color:rgba(255, 255, 255, 0.9);
@@ -175,6 +182,16 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
             font-size: 0.9rem;
             white-space: nowrap;
+            text-align: right;
+            min-width: 100px;
+        }}
+        
+        .actual-count {{
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            font-style: italic;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            display: block;
         }}
     </style>
     """, unsafe_allow_html=True)
@@ -215,26 +232,18 @@ def calculate_flight_metrics(_df):
         
     import math
     
-    # Sum by airline group first, then apply rounding
-    ak_crew = _df[_df['Airline_Code'] == 'AK'].copy()
-    d7_crew = _df[_df['Airline_Code'] == 'D7'].copy()
-    
-    # Calculate total bottles by airline group and apply rounding
-    ak_total_raw = ak_crew['Bottles_Sold_on_Flight'].sum()
-    ak_total_rounded = math.ceil(ak_total_raw) if ak_total_raw > 0 else 0
-    
-    d7_total_raw = d7_crew['Bottles_Sold_on_Flight'].sum()
-    d7_total_rounded = int(d7_total_raw)  # Floor for D7
-    
-    # Total bottles for prize pool is sum of both airline totals after rounding
-    total_bottles = ak_total_rounded + d7_total_rounded
+    # Keep original prize pool calculation (sum all bottles, then round up once)
+    total_bottles_raw = _df['Bottles_Sold_on_Flight'].sum()
+    total_bottles = math.ceil(total_bottles_raw) if total_bottles_raw > 0 else 0
     prize_pool = total_bottles * 5.00
     
-    # AK leaderboard - sum per crew, then round up individual totals
+    # AK leaderboard - sum per crew, keep both raw and rounded values
+    ak_crew = _df[_df['Airline_Code'] == 'AK'].copy()
     ak_leaderboard = ak_crew.groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
                            .sum() \
                            .reset_index()
-    # Round up the total for each crew member
+    # Keep the actual bottles sold from CSV and add rounded version
+    ak_leaderboard['Actual Bottles Sold'] = ak_leaderboard['Bottles_Sold_on_Flight'].round(2)  # Keep 2 decimal places
     ak_leaderboard['Total Bottles Sold'] = ak_leaderboard['Bottles_Sold_on_Flight'].apply(
         lambda x: math.ceil(x) if x > 0 else 0
     )
@@ -242,11 +251,13 @@ def calculate_flight_metrics(_df):
                                    .sort_values(by='Total Bottles Sold', ascending=False) \
                                    .head(10)
                  
-    # D7 leaderboard - sum per crew, then round down individual totals
+    # D7 leaderboard - sum per crew, keep both raw and rounded values
+    d7_crew = _df[_df['Airline_Code'] == 'D7'].copy()
     d7_leaderboard = d7_crew.groupby(['Crew_ID', 'Crew_Name'])['Bottles_Sold_on_Flight'] \
                            .sum() \
                            .reset_index()
-    # Round down (floor) the total for each crew member
+    # Keep the actual bottles sold from CSV and add rounded version
+    d7_leaderboard['Actual Bottles Sold'] = d7_leaderboard['Bottles_Sold_on_Flight'].round(2)  # Keep 2 decimal places
     d7_leaderboard['Total Bottles Sold'] = d7_leaderboard['Bottles_Sold_on_Flight'].apply(
         lambda x: int(x)  # This floors the value
     )
@@ -346,13 +357,15 @@ def create_leaderboard_section(crew_data, title):
             with cols[i]:
                 if i < len(crew_data):
                     row = crew_data.iloc[i]
+                    actual_bottles = row.get('Actual Bottles Sold', 0)
                     st.markdown(f"""
                     <div class="scorecard">
                         <div class="scorecard-rank">{ranks[i]}</div>
                         <div class="scorecard-name">{row['Crew_Name']}</div>
                         <div>
                             <div class="scorecard-sales">{row['Total Bottles Sold']}</div>
-                            <div class="scorecard-label">Bottles Sold</div>
+                            <div class="scorecard-label">Competition Points</div>
+                            <div class="scorecard-actual">({actual_bottles} actual)</div>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -364,7 +377,8 @@ def create_leaderboard_section(crew_data, title):
                         <div class="scorecard-name">No Data</div>
                         <div>
                             <div class="scorecard-sales">0</div>
-                            <div class="scorecard-label">Bottles Sold</div>
+                            <div class="scorecard-label">Competition Points</div>
+                            <div class="scorecard-actual">(0.00 actual)</div>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -378,12 +392,16 @@ def create_leaderboard_section(crew_data, title):
                 position = idx + 4
                 crew_name = str(row['Crew_Name']).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                 bottles = int(row['Total Bottles Sold'])
+                actual_bottles = row.get('Actual Bottles Sold', 0)
                 
                 rows_html += f"""
                 <div class="top-10-row">
                     <div class="position-number">#{position}</div>
                     <div class="crew-name">{crew_name}</div>
-                    <div class="bottles-count">{bottles} bottles</div>
+                    <div class="bottles-count">
+                        {bottles} points
+                        <span class="actual-count">({actual_bottles} actual)</span>
+                    </div>
                 </div>"""
             
             # Fill remaining slots with empty rows to maintain consistent height
@@ -393,7 +411,10 @@ def create_leaderboard_section(crew_data, title):
                 <div class="top-10-row" style="opacity: 0.3;">
                     <div class="position-number">#{position}</div>
                     <div class="crew-name">No Data</div>
-                    <div class="bottles-count">0 bottles</div>
+                    <div class="bottles-count">
+                        0 points
+                        <span class="actual-count">(0.00 actual)</span>
+                    </div>
                 </div>"""
             
             complete_html = f'<div class="top-10-list">{rows_html}</div>'
@@ -407,7 +428,10 @@ def create_leaderboard_section(crew_data, title):
                 <div class="top-10-row" style="opacity: 0.3;">
                     <div class="position-number">#{position}</div>
                     <div class="crew-name">No Data</div>
-                    <div class="bottles-count">0 bottles</div>
+                    <div class="bottles-count">
+                        0 points
+                        <span class="actual-count">(0.00 actual)</span>
+                    </div>
                 </div>"""
             
             complete_html = f'<div class="top-10-list">{rows_html}</div>'
