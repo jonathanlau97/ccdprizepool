@@ -212,9 +212,6 @@ def calculate_flight_metrics(_df):
 # --- Prize Pool Component ---
 def PrizePoolComponent(amount, total_bottles):
     """Renders the prize pool component."""
-    import time
-    timestamp = int(time.time() * 1000)  # Current timestamp in milliseconds
-    
     html_string = f"""
     <!DOCTYPE html>
     <html>
@@ -262,21 +259,21 @@ def PrizePoolComponent(amount, total_bottles):
     <body>
         <div class="prize-pool-container">
             <div class="prize-pool-label">Prize Pool</div>
-            <div id="prize-pool-counter-{timestamp}" class="prize-pool-value"></div>
+            <div id="prize-pool-counter" class="prize-pool-value"></div>
             <div class="bottles-total">
                 Total Bottles Sold: <span class="bottles-number">{total_bottles:,}</span>
             </div>
         </div>
         <script type="module">
           import {{ CountUp }} from 'https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js';
-          const options = {{prefix:'RM ',decimalPlaces:2,duration:2.0,separator:',',useEasing:true,}};
-          const countUp = new CountUp('prize-pool-counter-{timestamp}',{amount},options);
+          const options = {{prefix:'RM ',decimalPlaces:2,duration:0.5,separator:',',useEasing:true,}};
+          const countUp = new CountUp('prize-pool-counter',{amount},options);
           if(!countUp.error){{countUp.start();}}else{{console.error(countUp.error);}}
         </script>
     </body>
     </html>
     """
-    components.html(html_string, height=280, key=f"prize_pool_{timestamp}")
+    components.html(html_string, height=280)
 
 # --- Create Leaderboard Section (Top 3 Only) ---
 def create_leaderboard_section(crew_data, title):
