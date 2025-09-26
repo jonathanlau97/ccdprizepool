@@ -127,55 +127,6 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             font-size:0.8rem;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         }}
-        
-        /* Top 10 list container */
-        .top-10-list {{
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }}
-        
-        /* Top 10 individual rows */
-        .top-10-row {{
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 0.6rem;
-            margin: 0.4rem 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }}
-        
-        .position-number {{
-            color: #00ff41;
-            font-weight: bold;
-            font-size: 1rem;
-            min-width: 35px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-        }}
-        
-        .crew-name {{
-            color: #FFFFFF;
-            font-weight: 600;
-            flex: 1;
-            margin: 0 0.5rem;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            font-size: 0.9rem;
-            overflow-wrap: break-word;
-        }}
-        
-        .bottles-count {{
-            color: #00ff41;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            font-size: 0.9rem;
-            white-space: nowrap;
-        }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -224,7 +175,7 @@ def calculate_flight_metrics(_df):
     total_bottles = math.ceil(total_bottles_raw) if total_bottles_raw > 0 else 0
     prize_pool = total_bottles * 5.00
     
-    # AK leaderboard - sum per crew, then round up individual totals
+    # AK leaderboard - sum per crew, then round up individual totals - only top 3
     ak_leaderboard = ak_crew.groupby(['Crew_ID', 'Crew_Name'])['crew_sold_quantity'] \
                            .sum() \
                            .reset_index()
@@ -234,9 +185,9 @@ def calculate_flight_metrics(_df):
     )
     ak_leaderboard = ak_leaderboard.drop('crew_sold_quantity', axis=1) \
                                    .sort_values(by='Total Bottles Sold', ascending=False) \
-                                   .head(10)
+                                   .head(3)
                  
-    # D7 leaderboard - sum per crew, then round down individual totals
+    # D7 leaderboard - sum per crew, then round down individual totals - only top 3
     d7_leaderboard = d7_crew.groupby(['Crew_ID', 'Crew_Name'])['crew_sold_quantity'] \
                            .sum() \
                            .reset_index()
@@ -246,7 +197,7 @@ def calculate_flight_metrics(_df):
     )
     d7_leaderboard = d7_leaderboard.drop('crew_sold_quantity', axis=1) \
                                    .sort_values(by='Total Bottles Sold', ascending=False) \
-                                   .head(10)
+                                   .head(3)
             
     return prize_pool, ak_leaderboard, d7_leaderboard, total_bottles
 
@@ -316,23 +267,19 @@ def PrizePoolComponent(amount, total_bottles):
     """
     components.html(html_string, height=280)
 
-# --- Create Leaderboard Section ---
+# --- Create Leaderboard Section (Top 3 Only) ---
 def create_leaderboard_section(crew_data, title):
-    """Create a complete leaderboard section with top 3 cards and remaining list."""
-    # Create a container with fixed minimum height for alignment
+    """Create a leaderboard section with only top 3 cards."""
     with st.container():
         if crew_data.empty:
             st.markdown(f'<div class="section-title">{title}</div>', unsafe_allow_html=True)
             st.info("No data available")
-            # Add empty space to maintain height
-            for i in range(8):
-                st.write("")
             return
         
         # Section title
         st.markdown(f'<div class="section-title">{title}</div>', unsafe_allow_html=True)
         
-        # Top 3 cards - ensure we always have 3 slots
+        # Top 3 cards only
         cols = st.columns(3)
         ranks = ["🥇", "🥈", "🥉"]
         
@@ -362,50 +309,6 @@ def create_leaderboard_section(crew_data, title):
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
-        
-        # Remaining positions (4-10) in a styled list - always show same height container
-        remaining_crew = crew_data.iloc[3:10] if len(crew_data) > 3 else pd.DataFrame()
-        
-        if not remaining_crew.empty:
-            rows_html = ""
-            for idx, (_, row) in enumerate(remaining_crew.iterrows()):
-                position = idx + 4
-                crew_name = str(row['Crew_Name']).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-                bottles = int(row['Total Bottles Sold'])
-                
-                rows_html += f"""
-                <div class="top-10-row">
-                    <div class="position-number">#{position}</div>
-                    <div class="crew-name">{crew_name}</div>
-                    <div class="bottles-count">{bottles} bottles</div>
-                </div>"""
-            
-            # Fill remaining slots with empty rows to maintain consistent height
-            for i in range(len(remaining_crew), 7):
-                position = i + 4
-                rows_html += f"""
-                <div class="top-10-row" style="opacity: 0.3;">
-                    <div class="position-number">#{position}</div>
-                    <div class="crew-name">No Data</div>
-                    <div class="bottles-count">0 bottles</div>
-                </div>"""
-            
-            complete_html = f'<div class="top-10-list">{rows_html}</div>'
-            st.markdown(complete_html, unsafe_allow_html=True)
-        else:
-            # Create empty list container to maintain height
-            rows_html = ""
-            for i in range(7):
-                position = i + 4
-                rows_html += f"""
-                <div class="top-10-row" style="opacity: 0.3;">
-                    <div class="position-number">#{position}</div>
-                    <div class="crew-name">No Data</div>
-                    <div class="bottles-count">0 bottles</div>
-                </div>"""
-            
-            complete_html = f'<div class="top-10-list">{rows_html}</div>'
-            st.markdown(complete_html, unsafe_allow_html=True)
 
 # --- Main App ---
 st_autorefresh(interval=30 * 1000, key="data_refresher")
@@ -446,4 +349,3 @@ else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
-
