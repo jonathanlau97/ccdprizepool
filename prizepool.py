@@ -266,7 +266,7 @@ def PrizePoolComponent(amount, total_bottles):
         </div>
         <script type="module">
           import {{ CountUp }} from 'https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js';
-          const options = {{prefix:'RM ',decimalPlaces:2,duration:0.5,separator:',',useEasing:true,}};
+          const options = {{prefix:'RM ',decimalPlaces:2,duration:0.1,separator:',',useEasing:true,}};
           const countUp = new CountUp('prize-pool-counter',{amount},options);
           if(!countUp.error){{countUp.start();}}else{{console.error(countUp.error);}}
         </script>
@@ -357,3 +357,4 @@ else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
+
