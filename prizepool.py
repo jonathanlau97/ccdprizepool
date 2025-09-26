@@ -319,7 +319,7 @@ def create_leaderboard_section(crew_data, title):
                     """, unsafe_allow_html=True)
 
 # --- Main App ---
-st_autorefresh(interval=30 * 1000, key="data_refresher")
+st_autorefresh(interval=10 * 1000, key="data_refresher")
 
 # Apply background
 desktop_image_url = "https://raw.githubusercontent.com/jonathanlau97/ccdprizepool/main/suntory-desktop.jpg"
