@@ -295,7 +295,7 @@ def PrizePoolComponent(amount, total_bottles):
               animate();
               
               // Repeat animation every 4 seconds
-              setInterval(animate, 4000);
+              setInterval(animate, 10000);
           }} else {{
               console.error('CountUp error:', countUpInstance.error);
               document.getElementById('prize-pool-counter').textContent = 'RM {amount:,.2f}';
@@ -390,3 +390,4 @@ else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
+
