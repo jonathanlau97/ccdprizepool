@@ -211,7 +211,10 @@ def calculate_flight_metrics(_df):
 
 # --- Prize Pool Component ---
 def PrizePoolComponent(amount, total_bottles):
-    """Renders the prize pool component."""
+    """Renders the prize pool component with repeating animation."""
+    import time
+    timestamp = int(time.time() * 1000)  # Current timestamp in milliseconds
+    
     html_string = f"""
     <!DOCTYPE html>
     <html>
@@ -243,6 +246,7 @@ def PrizePoolComponent(amount, total_bottles):
             text-shadow: 0 0 20px rgba(0, 255, 65, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.8);
             line-height:1.1;
             margin-bottom: 1rem;
+            min-height: 1.2em;
         }}
         .bottles-total{{
             color:rgba(255, 255, 255, 0.9);
@@ -259,21 +263,56 @@ def PrizePoolComponent(amount, total_bottles):
     <body>
         <div class="prize-pool-container">
             <div class="prize-pool-label">Prize Pool</div>
-            <div id="prize-pool-counter" class="prize-pool-value"></div>
+            <div id="prize-pool-counter-{timestamp}" class="prize-pool-value">RM 0.00</div>
             <div class="bottles-total">
                 Total Bottles Sold: <span class="bottles-number">{total_bottles:,}</span>
             </div>
         </div>
         <script type="module">
-          import {{ CountUp }} from 'https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js';
-          const options = {{prefix:'RM ',decimalPlaces:2,duration:0.1,separator:',',useEasing:true,}};
-          const countUp = new CountUp('prize-pool-counter',{amount},options);
-          if(!countUp.error){{countUp.start();}}else{{console.error(countUp.error);}}
+          import {{ CountUp }} from 'https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.min.js';
+          
+          const options = {{
+              prefix: 'RM ',
+              decimalPlaces: 2,
+              duration: 2.5,
+              separator: ',',
+              useEasing: true,
+              easingFn: function (t, b, c, d) {{
+                  // Smooth easing function
+                  return c * ((t = t / d - 1) * t * t + 1) + b;
+              }}
+          }};
+          
+          let countUpInstance = new CountUp('prize-pool-counter-{timestamp}', {amount}, options);
+          
+          if (!countUpInstance.error) {{
+              // Function to animate
+              const animate = () => {{
+                  countUpInstance.reset();
+                  countUpInstance.start();
+              }};
+              
+              // Start animation immediately
+              animate();
+              
+              // Repeat animation every 4 seconds (2.5s animation + 1.5s pause)
+              const animationInterval = setInterval(animate, 4000);
+              
+              // Clean up interval when component is destroyed
+              window.addEventListener('beforeunload', () => {{
+                  if (animationInterval) {{
+                      clearInterval(animationInterval);
+                  }}
+              }});
+          }} else {{
+              console.error('CountUp error:', countUpInstance.error);
+              document.getElementById('prize-pool-counter-{timestamp}').textContent = 'RM {amount:,.2f}';
+          }}
         </script>
     </body>
     </html>
     """
-    components.html(html_string, height=280)
+    components.html(html_string, height=280, key=f"prize_pool_{timestamp}")
 
 # --- Create Leaderboard Section (Top 3 Only) ---
 def create_leaderboard_section(crew_data, title):
@@ -357,4 +396,3 @@ else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
-
