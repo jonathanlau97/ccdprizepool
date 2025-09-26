@@ -277,7 +277,7 @@ def PrizePoolComponent(amount, total_bottles):
           const options = {{
               prefix: 'RM ',
               decimalPlaces: 2,
-              duration: 3.5,
+              duration: 6,
               separator: ',',
               useEasing: true
           }};
@@ -390,6 +390,7 @@ else:
     st.warning("Could not load data from the GitHub URL.")
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
