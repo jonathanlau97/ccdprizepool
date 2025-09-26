@@ -213,7 +213,10 @@ def calculate_flight_metrics(_df):
 def PrizePoolComponent(amount, total_bottles):
     """Renders the prize pool component with repeating animation."""
     import time
-    timestamp = int(time.time() * 1000)  # Current timestamp in milliseconds
+    import random
+    
+    # Use a combination of time and random for unique key
+    unique_id = f"{int(time.time())}{random.randint(1000, 9999)}"
     
     html_string = f"""
     <!DOCTYPE html>
@@ -263,27 +266,23 @@ def PrizePoolComponent(amount, total_bottles):
     <body>
         <div class="prize-pool-container">
             <div class="prize-pool-label">Prize Pool</div>
-            <div id="prize-pool-counter-{timestamp}" class="prize-pool-value">RM 0.00</div>
+            <div id="prize-pool-counter" class="prize-pool-value">RM 0.00</div>
             <div class="bottles-total">
                 Total Bottles Sold: <span class="bottles-number">{total_bottles:,}</span>
             </div>
         </div>
         <script type="module">
-          import {{ CountUp }} from 'https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.min.js';
+          import {{ CountUp }} from 'https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js';
           
           const options = {{
               prefix: 'RM ',
               decimalPlaces: 2,
               duration: 2.5,
               separator: ',',
-              useEasing: true,
-              easingFn: function (t, b, c, d) {{
-                  // Smooth easing function
-                  return c * ((t = t / d - 1) * t * t + 1) + b;
-              }}
+              useEasing: true
           }};
           
-          let countUpInstance = new CountUp('prize-pool-counter-{timestamp}', {amount}, options);
+          let countUpInstance = new CountUp('prize-pool-counter', {amount}, options);
           
           if (!countUpInstance.error) {{
               // Function to animate
@@ -295,24 +294,19 @@ def PrizePoolComponent(amount, total_bottles):
               // Start animation immediately
               animate();
               
-              // Repeat animation every 4 seconds (2.5s animation + 1.5s pause)
-              const animationInterval = setInterval(animate, 4000);
-              
-              // Clean up interval when component is destroyed
-              window.addEventListener('beforeunload', () => {{
-                  if (animationInterval) {{
-                      clearInterval(animationInterval);
-                  }}
-              }});
+              // Repeat animation every 4 seconds
+              setInterval(animate, 4000);
           }} else {{
               console.error('CountUp error:', countUpInstance.error);
-              document.getElementById('prize-pool-counter-{timestamp}').textContent = 'RM {amount:,.2f}';
+              document.getElementById('prize-pool-counter').textContent = 'RM {amount:,.2f}';
           }}
         </script>
     </body>
     </html>
     """
-    components.html(html_string, height=280, key=f"prize_pool_{timestamp}")
+    
+    # Use components.html without dynamic key to avoid issues
+    components.html(html_string, height=280)
 
 # --- Create Leaderboard Section (Top 3 Only) ---
 def create_leaderboard_section(crew_data, title):
