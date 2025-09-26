@@ -88,23 +88,25 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             background-color: rgba(255, 255, 255, 0.15);
             border: 2px solid #00ff41;
             border-radius:15px;
-            padding:1rem;
+            padding:1.5rem;
             text-align:center;
-            height:100%;
+            min-height: 200px;
+            height: 200px;
             display:flex;
             flex-direction:column;
             justify-content:center;
-            gap:0.3rem;
+            gap:0.5rem;
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             margin-bottom: 1rem;
         }}
         .scorecard-rank{{
-            font-size:2rem;
+            font-size:2.5rem;
             font-weight:bold;
-            margin-bottom:0.25rem;
+            margin-bottom:0.5rem;
             color:#FFFFFF;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            line-height: 1;
         }}
         .scorecard-name{{
             color:#FFFFFF;
@@ -114,17 +116,23 @@ def apply_background_css(desktop_bg_url, mobile_bg_url):
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
             overflow-wrap: break-word;
             hyphens: auto;
+            margin-bottom: 0.5rem;
+            min-height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }}
         .scorecard-sales{{
             color:#00ff41;
-            font-size:1.5rem;
+            font-size:1.8rem;
             font-weight:bold;
             line-height:1;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            margin-bottom: 0.25rem;
         }}
         .scorecard-label{{
             color:rgba(255, 255, 255, 0.9);
-            font-size:0.8rem;
+            font-size:0.9rem;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         }}
     </style>
